@@ -7,11 +7,11 @@ export default function About() {
   const developers = [
     {
       id: 1,
-      name: 'Ahmad Wijaya',
+      name: 'Mecky Alvin Tanuwidjaya',
       role: 'Full Stack Developer',
-      email: 'ahmad.wijaya@umkmdelicious.com',
+      email: 'alvin@gmail.com',
       whatsapp: '+62 812-3456-7891',
-      photo: '/images/developer-1.jpg',
+      photo: '/images/',
       skills: ['Laravel', 'Next.js', 'MongoDB', 'TypeScript'],
       description: 'Berpengalaman dalam pengembangan web aplikasi selama 3 tahun.'
     },

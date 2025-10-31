@@ -12,56 +12,14 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: 'Sabana - Makanan Enak & Berkualitas',
-    template: '%s | UMKM Delicious'
+    default: 'Sabana Fried Chicken - Makanan Enak & Berkualitas',
+    template: '%s | Sabana Fried Chicken'
   },
   description: 'Website UMKM makanan dengan berbagai menu lezat dan fresh. Menyediakan nasi goreng, mie ayam, sate, dan berbagai makanan tradisional Indonesia.',
-  keywords: ['UMKM', 'makanan', 'kuliner', 'nasi goreng', 'mie ayam', 'makanan tradisional'],
-  authors: [{ name: 'UMKM Delicious Team' }],
-  creator: 'UMKM Delicious',
-  publisher: 'UMKM Delicious',
-  formatDetection: {
-    email: false,
-    address: false,
-    telephone: false,
-  },
-  metadataBase: new URL('https://umkm-delicious.vercel.app'),
-  openGraph: {
-    type: 'website',
-    locale: 'id_ID',
-    url: 'https://umkm-delicious.vercel.app',
-    title: 'Sabana - Makanan Enak & Berkualitas',
-    description: 'Website UMKM makanan dengan berbagai menu lezat dan fresh',
-    siteName: 'UMKM Delicious',
-    images: [
-      {
-        url: '/images/og-image.jpg',
-        width: 1200,
-        height: 630,
-        alt: 'UMKM Delicious',
-      },
-    ],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'UMKM Delicious - Makanan Enak & Berkualitas',
-    description: 'Website UMKM makanan dengan berbagai menu lezat dan fresh',
-    images: ['/images/og-image.jpg'],
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      'max-video-preview': -1,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
-    },
-  },
-  verification: {
-    google: 'your-google-verification-code',
-  },
+  keywords: ['UMKM', 'makanan', 'kuliner', 'nasi goreng', 'mie ayam', 'makanan tradisional', 'fried chicken'],
+  authors: [{ name: 'Sabana Fried Chicken Team' }],
+  creator: 'Sabana Fried Chicken',
+  publisher: 'Sabana Fried Chicken',
 };
 
 export default function RootLayout({
@@ -75,10 +33,6 @@ export default function RootLayout({
     <html lang="id" className="h-100">
       <head>
         <link rel="icon" href="/favicon.ico" />
-        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
-        <link rel="manifest" href="/site.webmanifest" />
         <meta name="theme-color" content="#0d6efd" />
       </head>
       <body className={`${inter.className} d-flex flex-column h-100`}>
@@ -87,11 +41,11 @@ export default function RootLayout({
           <nav className="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
             <div className="container">
               <a className="navbar-brand fw-bold d-flex align-items-center" href="/">
-                <span className="fs-4 me-2"></span>
+                <span className="fs-4 me-2">🍗</span>
                 <div>
-                  <div>Sabana Fried Chicken</div>
+                  <div>Sabana</div>
                   <small className="fw-normal opacity-75" style={{ fontSize: '0.7rem' }}>
-                    Makanan Enak & Berkualitas
+                    Fried Chicken
                   </small>
                 </div>
               </a>
@@ -116,7 +70,7 @@ export default function RootLayout({
                       href="/"
                       aria-current="page"
                     >
-                       Home
+                      🏠 Home
                     </a>
                   </li>
                   <li className="nav-item">
@@ -124,25 +78,24 @@ export default function RootLayout({
                       className="nav-link" 
                       href="/about"
                     >
-                       Tentang Kami
+                      👥 Tentang Kami
                     </a>
                   </li>
-                  <li className="nav-item dropdown">
+                  <li className="nav-item">
                     <a 
-                      className="nav-link dropdown-toggle" 
-                      href="#" 
-                      role="button" 
-                      data-bs-toggle="dropdown"
-                      aria-expanded="false"
+                      className="nav-link" 
+                      href="#menu"
                     >
-                       Menu
+                      🍽️ Menu
                     </a>
-                    <ul className="dropdown-menu">
-                      <li><a className="dropdown-item" href="#makanan"> Makanan</a></li>
-                      <li><a className="dropdown-item" href="#minuman"> Minuman</a></li>
-                      <li><hr className="dropdown-divider" /></li>
-                      <li><a className="dropdown-item" href="#promo"> Menu Promo</a></li>
-                    </ul>
+                  </li>
+                  <li className="nav-item">
+                    <a 
+                      className="nav-link" 
+                      href="#contact"
+                    >
+                      📞 Kontak
+                    </a>
                   </li>
                 </ul>
                 
@@ -152,7 +105,7 @@ export default function RootLayout({
                       className="nav-link" 
                       href="/dashboard"
                     >
-                       Admin Dashboard
+                      🔐 Admin Dashboard
                     </a>
                   </li>
                   <li className="nav-item">
@@ -162,7 +115,7 @@ export default function RootLayout({
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                       Pesan Sekarang
+                      📱 Pesan Sekarang
                     </a>
                   </li>
                 </ul>
@@ -181,20 +134,20 @@ export default function RootLayout({
           <div className="container">
             <div className="row">
               <div className="col-lg-4 mb-4 mb-lg-0">
-                <h5 className="fw-bold mb-3"> Sabana Fried Chicken</h5>
+                <h5 className="fw-bold mb-3">🍗 Sabana Fried Chicken</h5>
                 <p className="text-light opacity-75">
                   Menyajikan berbagai menu makanan dan minuman terbaik dengan bahan-bahan fresh 
                   dan cita rasa yang menggugah selera.
                 </p>
                 <div className="social-links">
-                  <a href="#" className="text-light me-3 opacity-75 hover-opacity-100">
-                    <i className="bi bi-facebook"></i> Facebook
+                  <a href="#" className="text-light me-3 opacity-75 hover-opacity-100 text-decoration-none">
+                    📘 Facebook
                   </a>
-                  <a href="#" className="text-light me-3 opacity-75 hover-opacity-100">
-                    <i className="bi bi-instagram"></i> Instagram
+                  <a href="#" className="text-light me-3 opacity-75 hover-opacity-100 text-decoration-none">
+                    📷 Instagram
                   </a>
-                  <a href="#" className="text-light opacity-75 hover-opacity-100">
-                    <i className="bi bi-tiktok"></i> TikTok
+                  <a href="#" className="text-light opacity-75 hover-opacity-100 text-decoration-none">
+                    🎵 TikTok
                   </a>
                 </div>
               </div>
@@ -230,7 +183,7 @@ export default function RootLayout({
                 <ul className="list-unstyled">
                   <li className="mb-2">
                     <span className="text-light opacity-75">
-                       Jl. Contoh No. 123, Jakarta
+                      📍 Jl. Contoh No. 123, Jakarta
                     </span>
                   </li>
                   <li className="mb-2">
@@ -238,7 +191,7 @@ export default function RootLayout({
                       href="tel:+622112345678" 
                       className="text-light opacity-75 text-decoration-none hover-opacity-100"
                     >
-                       (021) 1234-5678
+                      📞 (021) 1234-5678
                     </a>
                   </li>
                   <li className="mb-2">
@@ -248,15 +201,15 @@ export default function RootLayout({
                       rel="noopener noreferrer"
                       className="text-light opacity-75 text-decoration-none hover-opacity-100"
                     >
-                       +62 812-3456-7890
+                      📱 +62 812-3456-7890
                     </a>
                   </li>
                   <li className="mb-2">
                     <a 
-                      href="mailto:info@SabanaFriedChicken.com" 
+                      href="mailto:info@sabanafc.com" 
                       className="text-light opacity-75 text-decoration-none hover-opacity-100"
                     >
-                       info@umkmdelicious.com
+                      ✉️ info@sabanafc.com
                     </a>
                   </li>
                 </ul>
@@ -267,7 +220,7 @@ export default function RootLayout({
                 <ul className="list-unstyled text-light opacity-75">
                   <li className="mb-2">Senin - Jumat: 08:00 - 22:00</li>
                   <li className="mb-2">Sabtu - Minggu: 09:00 - 23:00</li>
-                  <li className="mb-2"> Pesan Antar 24 Jam</li>
+                  <li className="mb-2">🚚 Pesan Antar 24 Jam</li>
                 </ul>
                 <div className="mt-3">
                   <a 
@@ -276,7 +229,7 @@ export default function RootLayout({
                     rel="noopener noreferrer"
                     className="btn btn-success btn-sm"
                   >
-                    Pesan via WhatsApp
+                    📱 Pesan via WhatsApp
                   </a>
                 </div>
               </div>
@@ -311,7 +264,7 @@ export default function RootLayout({
               animation: 'pulse 2s infinite'
             }}
           >
-            <span className="fs-5 me-2"></span>
+            <span className="fs-5 me-2">📱</span>
             <div className="d-flex flex-column text-start">
               <small className="opacity-75" style={{ fontSize: '0.7rem', lineHeight: '1' }}>Pesan Sekarang</small>
               <strong style={{ fontSize: '0.8rem', lineHeight: '1' }}>WhatsApp</strong>

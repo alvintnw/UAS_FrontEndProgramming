@@ -3,7 +3,23 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import api from '@/services/api';
+
+// Dynamic import LeafletMap untuk menghindari SSR error
+const LeafletMap = dynamic(() => import('@/components/LeafletMap'), {
+  ssr: false,
+  loading: () => (
+    <div 
+      className="d-flex align-items-center justify-content-center bg-light rounded"
+      style={{ height: '400px' }}
+    >
+      <div className="spinner-border text-primary" role="status">
+        <span className="visually-hidden">Loading map...</span>
+      </div>
+    </div>
+  ),
+});
 
 interface Product {
   id: number;
@@ -75,10 +91,10 @@ export default function Home() {
               </p>
               <div className="d-flex gap-3 flex-wrap">
                 <Link href="#menu" className="btn btn-light btn-lg">
-                   Lihat Menu
+                  🍽️ Lihat Menu
                 </Link>
                 <Link href="/about" className="btn btn-outline-light btn-lg">
-                   Tentang Kami
+                  ℹ️ Tentang Kami
                 </Link>
                 <a 
                   href="https://wa.me/6281234567890" 
@@ -86,24 +102,25 @@ export default function Home() {
                   rel="noopener noreferrer"
                   className="btn btn-success btn-lg"
                 >
-                   Pesan Sekarang
+                  📱 Pesan Sekarang
                 </a>
               </div>
             </div>
-            <div className="col-lg-6">
+            <div className="col-lg-6 mt-4 mt-lg-0">
               <div className="text-center">
                 <div 
-                  className="hero-image bg-light rounded d-flex align-items-center justify-content-center text-muted"
+                  className="hero-image bg-light rounded d-flex align-items-center justify-content-center text-white"
                   style={{ 
                     height: '300px', 
                     background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                    color: 'white'
+                    color: 'white',
+                    boxShadow: '0 10px 30px rgba(0,0,0,0.3)'
                   }}
                 >
                   <div>
-                    <div className="fs-1 mb-3"></div>
-                    <h4>UMKM Delicious</h4>
-                    <p className="mb-0">Makanan Enak & Berkualitas</p>
+                    <div className="fs-1 mb-3">🍗</div>
+                    <h4>Sabana</h4>
+                    <p className="mb-0">Fried Chicken</p>
                   </div>
                 </div>
               </div>
@@ -116,7 +133,7 @@ export default function Home() {
       <section id="menu" className="py-5">
         <div className="container">
           <div className="text-center mb-5">
-            <h2 className="fw-bold display-5"> Menu Andalan Kami</h2>
+            <h2 className="fw-bold display-5">🍽️ Menu Andalan Kami</h2>
             <p className="text-muted lead">Pilihan menu terbaik yang selalu dinantikan pelanggan</p>
           </div>
           
@@ -131,14 +148,14 @@ export default function Home() {
 
           {error && (
             <div className="alert alert-warning text-center mx-auto" style={{ maxWidth: '500px' }}>
-              <div className="fs-4"></div>
+              <div className="fs-4">⚠️</div>
               <h5>Terjadi Kesalahan</h5>
               <p className="mb-3">{error}</p>
               <button 
                 onClick={fetchProducts} 
                 className="btn btn-primary btn-sm"
               >
-                 Coba Lagi
+                🔄 Coba Lagi
               </button>
             </div>
           )}
@@ -159,7 +176,7 @@ export default function Home() {
                         onClick={() => handleWhatsAppOrder(food.name)}
                       >
                         <div className="text-center">
-                          <div className="fs-1 mb-2"></div>
+                          <div className="fs-1 mb-2">🍗</div>
                           <small>Klik untuk pesan</small>
                         </div>
                         <div className="position-absolute top-0 end-0 m-2">
@@ -175,7 +192,7 @@ export default function Home() {
                             className="btn btn-primary btn-sm"
                             onClick={() => handleWhatsAppOrder(food.name)}
                           >
-                             Pesan
+                            🛒 Pesan
                           </button>
                         </div>
                       </div>
@@ -186,7 +203,7 @@ export default function Home() {
 
               {products.length === 0 && !loading && (
                 <div className="text-center py-5">
-                  <div className="fs-1 text-muted mb-3"></div>
+                  <div className="fs-1 text-muted mb-3">📭</div>
                   <h5 className="text-muted">Menu sedang tidak tersedia</h5>
                   <p className="text-muted">Silakan hubungi kami untuk informasi menu terbaru</p>
                 </div>
@@ -200,13 +217,13 @@ export default function Home() {
       <section className="py-5 bg-light">
         <div className="container">
           <div className="text-center mb-5">
-            <h3 className="fw-bold display-6"> Kenapa Memilih Kami?</h3>
+            <h3 className="fw-bold display-6">⭐ Kenapa Memilih Kami?</h3>
           </div>
           <div className="row g-4 text-center">
             <div className="col-md-4">
               <div className="feature-icon bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" 
                    style={{ width: '80px', height: '80px' }}>
-                <span className="fs-4"></span>
+                <span className="fs-4">🚚</span>
               </div>
               <h5 className="fw-bold">Gratis Ongkir</h5>
               <p className="text-muted">Gratis pengantaran untuk area sekitar dengan minimum pembelian tertentu</p>
@@ -214,7 +231,7 @@ export default function Home() {
             <div className="col-md-4">
               <div className="feature-icon bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" 
                    style={{ width: '80px', height: '80px' }}>
-                <span className="fs-4"></span>
+                <span className="fs-4">🕐</span>
               </div>
               <h5 className="fw-bold">Layanan 24 Jam</h5>
               <p className="text-muted">Layanan pesan antar 24 jam untuk kenyamanan Anda kapan saja</p>
@@ -222,7 +239,7 @@ export default function Home() {
             <div className="col-md-4">
               <div className="feature-icon bg-warning text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" 
                    style={{ width: '80px', height: '80px' }}>
-                <span className="fs-4"></span>
+                <span className="fs-4">🥗</span>
               </div>
               <h5 className="fw-bold">Bahan Fresh</h5>
               <p className="text-muted">Menggunakan bahan-bahan segar dan berkualitas terbaik setiap hari</p>
@@ -233,7 +250,7 @@ export default function Home() {
             <div className="col-md-4">
               <div className="feature-icon bg-info text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" 
                    style={{ width: '80px', height: '80px' }}>
-                <span className="fs-4"></span>
+                <span className="fs-4">👨‍🍳</span>
               </div>
               <h5 className="fw-bold">Chef Profesional</h5>
               <p className="text-muted">Dimasak oleh chef berpengalaman dengan resep turun temurun</p>
@@ -241,7 +258,7 @@ export default function Home() {
             <div className="col-md-4">
               <div className="feature-icon bg-danger text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" 
                    style={{ width: '80px', height: '80px' }}>
-                <span className="fs-4"></span>
+                <span className="fs-4">💳</span>
               </div>
               <h5 className="fw-bold">Pembayaran Mudah</h5>
               <p className="text-muted">Berbagai metode pembayaran tersedia untuk kemudahan transaksi</p>
@@ -249,7 +266,7 @@ export default function Home() {
             <div className="col-md-4">
               <div className="feature-icon bg-secondary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" 
                    style={{ width: '80px', height: '80px' }}>
-                <span className="fs-4"></span>
+                <span className="fs-4">⭐</span>
               </div>
               <h5 className="fw-bold">Terpercaya</h5>
               <p className="text-muted">Sudah melayani ribuan pelanggan dengan kepuasan terjamin</p>
@@ -282,53 +299,70 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Contact Section */}
-      <section className="py-5">
+      {/* Contact Section with Leaflet Map */}
+      <section className="py-5" id="contact">
         <div className="container">
+          <div className="text-center mb-5">
+            <h3 className="fw-bold display-6">📍 Lokasi & Kontak Kami</h3>
+            <p className="text-muted lead">Kunjungi toko kami atau hubungi untuk pemesanan</p>
+          </div>
+
           <div className="row align-items-center">
-            <div className="col-lg-6">
-              <h3 className="fw-bold display-6 mb-4"> Hubungi Kami</h3>
+            <div className="col-lg-6 mb-4 mb-lg-0">
+              <h4 className="fw-bold mb-4">💬 Hubungi Kami</h4>
               <div className="contact-info">
-                <div className="d-flex align-items-center mb-3">
-                  <span className="fs-5 me-3"></span>
+                <div className="d-flex align-items-start mb-3 p-3 bg-light rounded">
+                  <span className="fs-4 me-3">📍</span>
                   <div>
-                    <strong>Alamat:</strong>
-                    <p className="mb-0 text-muted">Jl. Contoh No. 123, Jakarta Pusat</p>
-                  </div>
-                </div>
-                <div className="d-flex align-items-center mb-3">
-                  <span className="fs-5 me-3"></span>
-                  <div>
-                    <strong>Telepon:</strong>
+                    <strong className="d-block mb-1">Alamat:</strong>
                     <p className="mb-0 text-muted">
-                      <a href="tel:+622112345678" className="text-decoration-none">(021) 1234-5678</a>
+                      Jl. Contoh No. 123, Jakarta Pusat, DKI Jakarta 10110
                     </p>
                   </div>
                 </div>
-                <div className="d-flex align-items-center mb-3">
-                  <span className="fs-5 me-3">📱</span>
+
+                <div className="d-flex align-items-start mb-3 p-3 bg-light rounded">
+                  <span className="fs-4 me-3">📞</span>
                   <div>
-                    <strong>WhatsApp:</strong>
+                    <strong className="d-block mb-1">Telepon:</strong>
+                    <p className="mb-0 text-muted">
+                      <a href="tel:+622112345678" className="text-decoration-none text-primary">
+                        (021) 1234-5678
+                      </a>
+                    </p>
+                  </div>
+                </div>
+
+                <div className="d-flex align-items-start mb-3 p-3 bg-light rounded">
+                  <span className="fs-4 me-3">📱</span>
+                  <div>
+                    <strong className="d-block mb-1">WhatsApp:</strong>
                     <p className="mb-0 text-muted">
                       <a 
                         href="https://wa.me/6281234567890" 
                         target="_blank" 
                         rel="noopener noreferrer"
-                        className="text-decoration-none"
+                        className="text-decoration-none text-success"
                       >
                         +62 812-3456-7890
                       </a>
                     </p>
                   </div>
                 </div>
-                <div className="d-flex align-items-center mb-4">
-                  <span className="fs-5 me-3"></span>
+
+                <div className="d-flex align-items-start mb-4 p-3 bg-light rounded">
+                  <span className="fs-4 me-3">🕐</span>
                   <div>
-                    <strong>Jam Operasional:</strong>
-                    <p className="mb-0 text-muted">Setiap Hari 08:00 - 22:00 WIB</p>
+                    <strong className="d-block mb-1">Jam Operasional:</strong>
+                    <p className="mb-0 text-muted">
+                      Senin - Jumat: 08:00 - 22:00 WIB<br />
+                      Sabtu - Minggu: 09:00 - 23:00 WIB<br />
+                      <span className="badge bg-success mt-1">Pesan Antar 24 Jam</span>
+                    </p>
                   </div>
                 </div>
               </div>
+
               <div className="d-flex gap-2 flex-wrap">
                 <a 
                   href="https://wa.me/6281234567890" 
@@ -336,31 +370,36 @@ export default function Home() {
                   rel="noopener noreferrer"
                   className="btn btn-success btn-lg"
                 >
-                   WhatsApp
+                  💬 WhatsApp
                 </a>
                 <a 
                   href="tel:+622112345678" 
                   className="btn btn-outline-primary btn-lg"
                 >
-                   Telepon
+                  📞 Telepon
                 </a>
+                <Link href="/about" className="btn btn-outline-secondary btn-lg">
+                  ℹ️ Tentang Kami
+                </Link>
               </div>
             </div>
+
             <div className="col-lg-6">
-              <div 
-                className="map-placeholder rounded d-flex align-items-center justify-content-center text-white"
-                style={{ 
-                  height: '400px',
-                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+              {/* Leaflet Map Component */}
+              <LeafletMap 
+                location={{
+                  lat: -6.1705566665495395,               // Ganti dengan koordinat real Anda
+                  lng: 106.7863817134934,             // Ganti dengan koordinat real Anda
+                  title: 'Sabana Fried Chicken',
+                  address: 'Jl. Contoh No. 123, Jakarta Pusat, DKI Jakarta 10110',
+                  phone: '+62 812-3456-7890',
+                  description: 'Toko kami buka setiap hari. Pesan antar tersedia 24 jam!'
                 }}
-              >
-                <div className="text-center">
-                  <div className="fs-1 mb-3"></div>
-                  <h5>Lokasi Kami</h5>
-                  <p className="mb-0">Jl. Contoh No. 123, Jakarta</p>
-                  <small className="opacity-75">[Peta akan ditampilkan di sini]</small>
-                </div>
-              </div>
+                height="450px"
+                zoom={16}
+                enableScrollZoom={true}
+              />
+              
             </div>
           </div>
         </div>
@@ -369,7 +408,7 @@ export default function Home() {
       {/* CTA Section */}
       <section className="py-5 bg-dark text-white">
         <div className="container text-center">
-          <h3 className="fw-bold display-6 mb-3">Siap Memesan?</h3>
+          <h3 className="fw-bold display-6 mb-3">🎉 Siap Memesan?</h3>
           <p className="lead mb-4">Pesan sekarang dan nikmati kelezatan makanan kami!</p>
           <div className="d-flex gap-3 justify-content-center flex-wrap">
             <a 
@@ -378,13 +417,13 @@ export default function Home() {
               rel="noopener noreferrer"
               className="btn btn-success btn-lg"
             >
-              Pesan via WhatsApp
+              📱 Pesan via WhatsApp
             </a>
             <Link href="/about" className="btn btn-outline-light btn-lg">
-              Tentang Kami
+              ℹ️ Tentang Kami
             </Link>
             <Link href="/dashboard" className="btn btn-primary btn-lg">
-              Admin Dashboard
+              🔐 Admin Dashboard
             </Link>
           </div>
         </div>
