@@ -4,6 +4,7 @@ import './globals.css';
 import { Inter } from 'next/font/google';
 import BootstrapClient from '@/components/BootstrapClient';
 import type { Metadata } from 'next';
+import Link from 'next/link';
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -40,7 +41,7 @@ export default function RootLayout({
         <header>
           <nav className="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
             <div className="container">
-              <a className="navbar-brand fw-bold d-flex align-items-center" href="/">
+              <Link className="navbar-brand fw-bold d-flex align-items-center" href="/">
                 <span className="fs-4 me-2">🍗</span>
                 <div>
                   <div>Sabana</div>
@@ -48,7 +49,7 @@ export default function RootLayout({
                     Fried Chicken
                   </small>
                 </div>
-              </a>
+              </Link>
               
               <button 
                 className="navbar-toggler" 
@@ -65,25 +66,25 @@ export default function RootLayout({
               <div className="collapse navbar-collapse" id="navbarNav">
                 <ul className="navbar-nav me-auto">
                   <li className="nav-item">
-                    <a 
+                    <Link
                       className="nav-link active" 
                       href="/"
                       aria-current="page"
                     >
                       🏠 Home
-                    </a>
+                    </Link>
                   </li>
                   <li className="nav-item">
-                    <a 
+                    <Link
                       className="nav-link" 
                       href="/about"
                     >
                       👥 Tentang Kami
-                    </a>
+                    </Link>
                   </li>
                   <li className="nav-item">
-                    <a 
-                      className="nav-link" 
+                    <a
+                      className="nav-link"
                       href="#menu"
                     >
                       🍽️ Menu
@@ -101,12 +102,12 @@ export default function RootLayout({
                 
                 <ul className="navbar-nav ms-auto">
                   <li className="nav-item">
-                    <a 
+                    <Link
                       className="nav-link" 
                       href="/dashboard"
                     >
                       🔐 Admin Dashboard
-                    </a>
+                    </Link>
                   </li>
                   <li className="nav-item">
                     <a 
@@ -156,14 +157,14 @@ export default function RootLayout({
                 <h6 className="fw-bold mb-3">Quick Links</h6>
                 <ul className="list-unstyled">
                   <li className="mb-2">
-                    <a href="/" className="text-light opacity-75 text-decoration-none hover-opacity-100">
+                    <Link href="/" className="text-light opacity-75 text-decoration-none hover-opacity-100">
                       Home
-                    </a>
+                    </Link>
                   </li>
                   <li className="mb-2">
-                    <a href="/about" className="text-light opacity-75 text-decoration-none hover-opacity-100">
+                    <Link href="/about" className="text-light opacity-75 text-decoration-none hover-opacity-100">
                       Tentang Kami
-                    </a>
+                    </Link>
                   </li>
                   <li className="mb-2">
                     <a href="#menu" className="text-light opacity-75 text-decoration-none hover-opacity-100">
@@ -245,7 +246,7 @@ export default function RootLayout({
               </div>
               <div className="col-md-6 text-center text-md-end">
                 <p className="mb-0 text-light opacity-75">
-                  Developed by <a href="/about" className="text-light text-decoration-none">Developer Team</a>
+                  Developed by <Link href="/about" className="text-light text-decoration-none">Developer Team</Link>
                 </p>
               </div>
             </div>

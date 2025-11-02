@@ -7,6 +7,7 @@ use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\SaleController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\FoodController;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,6 +35,8 @@ Route::get('/products', [ProductController::class, 'index']);
 Route::get('/products/{id}', [ProductController::class, 'show']);
 Route::get('/developers', [DeveloperController::class, 'index']);
 Route::get('/developers/{id}', [DeveloperController::class, 'show']);
+
+Route::get('/foods', [FoodController::class, 'index']);
 
 // Authentication
 Route::post('/login', [AuthController::class, 'login']);

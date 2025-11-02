@@ -17,11 +17,11 @@ export default function About() {
     },
     {
       id: 2,
-      name: 'Sari Dewi',
+      name: 'Rendy Matheu',
       role: 'Frontend Developer',
-      email: 'sari.dewi@umkmdelicious.com',
-      whatsapp: '+62 812-3456-7892',
-      photo: '/images/developer-2.jpg',
+      email: 'rendymatheu52@gmail.com',
+      whatsapp: '+62 821-7737-3376',
+      photo: '/images/',
       skills: ['Next.js', 'React', 'Bootstrap', 'CSS'],
       description: 'Spesialis dalam membuat UI/UX yang menarik dan user-friendly.'
     },
@@ -184,12 +184,20 @@ export default function About() {
             <div className="col-lg-6">
               <div 
                 className="team-photo bg-light rounded d-flex align-items-center justify-content-center text-muted"
-                style={{ height: '400px', border: '2px dashed #dee2e6' }}
+                style={{ 
+                  height: '400px', 
+                  overflow: 'hidden',
+                  position: 'relative'
+                }}
               >
-                <div className="text-center">
-                  <div className="fs-1 mb-3">📸</div>
-                  <p>Foto Bersama Tim Developer dan Mitra UMKM</p>
-                </div>
+                <Image
+                  src="/images/Mitra-Photo.png" // Path ke gambar Anda di folder public/images
+                  alt="Foto Tim Developer dan Mitra UMKM"
+                  fill={true}
+                  style={{ 
+                    objectFit: 'cover'
+                  }}
+                  />
               </div>
             </div>
           </div>

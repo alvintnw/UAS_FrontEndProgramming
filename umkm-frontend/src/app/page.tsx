@@ -5,6 +5,8 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import api from '@/services/api';
+import Image from 'next/image';
+
 
 // Dynamic import LeafletMap untuk menghindari SSR error
 const LeafletMap = dynamic(() => import('@/components/LeafletMap'), {
@@ -22,20 +24,15 @@ const LeafletMap = dynamic(() => import('@/components/LeafletMap'), {
 });
 
 interface Product {
-  id: number;
+  id: string;
   name: string;
   description: string;
   price: number;
   category: string;
+  image: string;
+  created_at: string;
+  updated_at: string;
   image_url: string;
-  stock_quantity: number;
-  ingredients: string[];
-  nutrition_facts: {
-    calories: number;
-    protein: string;
-    carbs: string;
-    fat: string;
-  };
 }
 
 export default function Home() {
@@ -49,21 +46,21 @@ export default function Home() {
 
   const fetchProducts = async () => {
     try {
-      const response = await api.get('/products');
-      setProducts(response.data.data);
+      const response = await api.get('/foods');
+      setProducts(response.data);
     } catch (err) {
-      setError('Gagal memuat data produk. Silakan refresh halaman.');
+      setError('Gagal memuat data menu. Silakan refresh halaman.');
       console.error('Error fetching products:', err);
     } finally {
       setLoading(false);
     }
   };
 
-  const featuredFoods = products.slice(0, 6).map(product => ({
+  const featuredFoods = products.slice(0, 14).map(product => ({
     id: product.id,
     name: product.name,
     price: `Rp ${product.price.toLocaleString('id-ID')}`,
-    image: product.image_url || '/images/placeholder-food.jpg',
+    image_url: product.image_url || '/images/placeholder-food.jpg',
     description: product.description,
     category: product.category
   }));
@@ -109,19 +106,24 @@ export default function Home() {
             <div className="col-lg-6 mt-4 mt-lg-0">
               <div className="text-center">
                 <div 
-                  className="hero-image bg-light rounded d-flex align-items-center justify-content-center text-white"
+                  className="hero-image rounded"
                   style={{ 
-                    height: '300px', 
-                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                    color: 'white',
-                    boxShadow: '0 10px 30px rgba(0,0,0,0.3)'
+                    width: '100%',
+                    maxWidth: '400px', // <-- UBAH ANGKA INI (misal dari 500px ke 400px)
+                    overflow: 'hidden',
+                    margin: '0 auto',
+                    borderRadius: '0.375rem',
                   }}
                 >
-                  <div>
-                    <div className="fs-1 mb-3">🍗</div>
-                    <h4>Sabana</h4>
-                    <p className="mb-0">Fried Chicken</p>
-                  </div>
+                  <Image
+                    src="/images/GambarSabana7.png" // Path ke gambar Anda di folder public/images
+                    alt="Daftar Menu Ayam Goreng Sabana"
+                    width={1500} 
+                    height={1000}
+                    className="rounded-3xl w-100 h-auto"
+                    style={{ objectFit: "contain" }}
+                    priority 
+                  />
                 </div>
               </div>
             </div>
@@ -167,18 +169,21 @@ export default function Home() {
                   <div key={food.id} className="col-md-6 col-lg-4">
                     <div className="card h-100 shadow-sm border-0 product-card">
                       <div 
-                        className="card-img-top d-flex align-items-center justify-content-center text-white position-relative"
+                        className="hero-image rounded"
                         style={{ 
-                          height: '200px',
-                          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                          cursor: 'pointer'
+                        height: '250px', 
+                        position: 'relative',
+                        overflow: 'hidden',
+                        borderRadius: '0.375rem',
                         }}
-                        onClick={() => handleWhatsAppOrder(food.name)}
                       >
-                        <div className="text-center">
-                          <div className="fs-1 mb-2">🍗</div>
-                          <small>Klik untuk pesan</small>
-                        </div>
+                        <Image
+                          src={food.image_url}
+                          alt={food.name}
+                          fill
+                          style={{ objectFit: "cover" }}
+                          sizes="(max-width: 400px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        />
                         <div className="position-absolute top-0 end-0 m-2">
                           <span className="badge bg-success">{food.category}</span>
                         </div>

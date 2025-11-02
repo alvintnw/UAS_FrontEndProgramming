@@ -1,6 +1,13 @@
 /* src/app/globals.css */
 .hero-section {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding-top: 5rem;
+  padding-bottom: 5rem;
+}
+
+.hero-section .hero-image {
+  max-width: 500px; /* Batasi lebar maksimum gambar */
+  margin: 0 auto; /* Tengahkankan gambar jika container lebih lebar */
 }
 
 .placeholder-hero {
