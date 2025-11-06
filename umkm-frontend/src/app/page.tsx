@@ -29,7 +29,6 @@ interface Product {
   description: string;
   price: number;
   category: string;
-  image: string;
   created_at: string;
   updated_at: string;
   image_url: string;
@@ -47,7 +46,7 @@ export default function Home() {
   const fetchProducts = async () => {
     try {
       const response = await api.get('/foods');
-      setProducts(response.data);
+      setProducts(response.data.data);
     } catch (err) {
       setError('Gagal memuat data menu. Silakan refresh halaman.');
       console.error('Error fetching products:', err);

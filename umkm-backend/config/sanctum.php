@@ -49,6 +49,8 @@ return [
 
     'expiration' => null,
 
+    'expiration' => 60 * 24,
+
     /*
     |--------------------------------------------------------------------------
     | Token Prefix
@@ -81,4 +83,5 @@ return [
         'validate_csrf_token' => Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class,
     ],
 
+    'personal_access_token_model' => App\Models\PersonalAccessToken::class,
 ];

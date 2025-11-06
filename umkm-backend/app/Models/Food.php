@@ -6,27 +6,61 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use MongoDB\Laravel\Eloquent\Model;
 
 class Food extends Model
-{
+{ 
     use HasFactory;
 
-    protected $table = 'foods';
+    protected $connection = 'mongodb';
+    protected $collection = 'foods'; 
+
+    // HAPUS 'protected $table = 'foods';' (tidak perlu untuk MongoDB)
 
     protected $fillable = [
         'name',
         'description',
         'price',
-        'image',
-        'category'
+        'category',
+        'image_url', // Ini adalah field asli dari database
+        'stock_quantity',
+        'ingredients',
+        'nutrition_facts',
+        'is_active',
     ];
 
-    protected $appends = ['image_url'];
+    protected $casts = [
+        'price' => 'integer',
+        'stock_quantity' => 'integer',
+        'is_active' => 'boolean',
+        // 'ingredients' => 'array',
+        // 'nutrition_facts' => 'array',
+    ];
 
-    public function getImageUrlAttribute()
+    /**
+     * FUNGSI ACCESSOR YANG BENAR.
+     * Ia mengambil nilai mentah $value (path file) dan mengubahnya menjadi URL.
+     */
+    public function getImageUrlAttribute($value)
     {
-        if ($this->image) {
-            return asset('storage/' . $this->image);
+        // KITA CEK LANGSUNG VARIABEL '$value' (yang berisi path dari DB)
+        if ($value) { 
+            // KITA KEMBALIKAN '$value'
+            return asset('storage/' . $value); 
         }
+        
         return null;
     }
 
+    public function getPriceFormattedAttribute()
+    {
+        return 'Rp ' . number_format($this->price, 0, ',', '.');
+    }
+
+    public function scopeActive($query)
+    {
+        return $query->where('is_active', true);
+    }
+
+    public function scopeCategory($query, $category)
+    {
+        return $query->where('category', $category);
+    }
 }

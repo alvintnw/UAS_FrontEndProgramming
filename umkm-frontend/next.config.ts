@@ -5,9 +5,15 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: 'http',
-        hostname: 'localhost',
+        hostname: 'localhost', // Untuk akses via localhost
         port: '8000',
-        pathname: '/storage/**', // Izinkan semua gambar dari folder /storage
+        pathname: '/storage/**',
+      },
+      {
+        protocol: 'http',
+        hostname: '127.0.0.1', // Untuk akses via 127.0.0.1
+        port: '8000',
+        pathname: '/storage/**',
       },
     ],
   },

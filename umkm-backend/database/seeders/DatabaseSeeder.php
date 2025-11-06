@@ -9,7 +9,8 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         $this->call([
-            UserSeeder::class,        // SQLite
+            UserSeeder::class, 
+            FoodSeeder::class,    
             // ProductSeeder::class,  // Comment dulu
             // DeveloperSeeder::class, // Comment dulu  
             // SaleSeeder::class,     // Comment dulu

@@ -7,7 +7,7 @@ export interface Product {
   image_url: string;
   stock_quantity?: number;
   ingredients?: string[];
-  nutrition_facts?: any;
+  nutrition_facts?: string;
 }
 
 export interface Developer {
