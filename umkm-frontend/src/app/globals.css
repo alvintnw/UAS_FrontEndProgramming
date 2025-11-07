@@ -634,15 +634,7 @@
   }
 }
 
-/* Loading animation */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
 
-.product-card {
-  animation: fadeIn 0.6s ease-out;
-}
 
 /* Navbar hover underline effect */
 .navbar-nav .nav-link {
@@ -683,4 +675,263 @@
 
 .slide-in-right {
   animation: slideInRight 1s ease-out;
+}
+
+/* Enhanced About Page Styles */
+.about-hero-section {
+  background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%) !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.about-hero-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.about-bg-layer-1 {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+  animation: float 6s ease-in-out infinite;
+}
+
+.about-bg-layer-2 {
+  position: absolute;
+  top: 20%;
+  right: -30%;
+  width: 60%;
+  height: 60%;
+  background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%);
+  animation: float 8s ease-in-out infinite reverse;
+}
+
+.about-bg-layer-3 {
+  position: absolute;
+  bottom: -20%;
+  left: 10%;
+  width: 40%;
+  height: 40%;
+  background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+  animation: float 10s ease-in-out infinite;
+}
+
+.about-floating-elements {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.about-floating-item {
+  position: absolute;
+  font-size: 2rem;
+  opacity: 0.6;
+  animation: float 4s ease-in-out infinite;
+}
+
+.about-floating-item.item-1 {
+  top: 20%;
+  left: 10%;
+  animation-delay: 0s;
+}
+
+.about-floating-item.item-2 {
+  top: 60%;
+  right: 15%;
+  animation-delay: 1s;
+}
+
+.about-floating-item.item-3 {
+  top: 40%;
+  left: 80%;
+  animation-delay: 2s;
+}
+
+.about-floating-item.item-4 {
+  top: 80%;
+  left: 20%;
+  animation-delay: 3s;
+}
+
+.about-hero-content {
+  position: relative;
+  z-index: 2;
+}
+
+/* Enhanced Developer Section */
+.about-developer-section {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  position: relative;
+}
+
+.about-developer-bg-decoration {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 200px;
+  background: linear-gradient(135deg, rgba(255,107,53,0.1) 0%, rgba(247,147,30,0.1) 100%);
+  border-radius: 0 0 50% 50%;
+  z-index: 1;
+}
+
+.developer-card {
+  background: white;
+  border-radius: 20px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.developer-card:hover {
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+}
+
+.developer-image-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.developer-image {
+  transition: transform 0.3s ease;
+}
+
+.developer-card:hover .developer-image {
+  transform: scale(1.1);
+}
+
+.skill-badge {
+  transition: all 0.3s ease;
+}
+
+.skill-badge:hover {
+  background-color: #ff6b35 !important;
+  color: white !important;
+  transform: scale(1.05);
+}
+
+/* Enhanced Contact Section */
+.about-contact-section {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  color: black;
+  position: relative;
+  overflow: hidden;
+}
+
+.about-contact-bg-pattern {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 20% 80%, rgba(255,255,255,0.1) 0%, transparent 50%),
+              radial-gradient(circle at 80% 20%, rgba(255,255,255,0.1) 0%, transparent 50%);
+  z-index: 1;
+}
+
+.contact-service-card {
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 20px;
+  padding: 2rem;
+  text-align: center;
+  transition: all 0.3s ease;
+  height: 100%;
+}
+
+.contact-service-card:hover {
+  transform: translateY(-10px);
+  background: rgba(255,255,255,0.2);
+}
+
+.service-icon {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  transition: all 0.3s ease;
+  margin: 0 auto 1rem;
+}
+
+.service-icon:hover {
+  transform: scale(1.1) rotate(5deg);
+}
+
+/* Responsive Enhancements for About Page */
+@media (max-width: 768px) {
+  .about-hero-section {
+    min-height: 100vh !important;
+    padding: 2rem 0;
+  }
+
+  .about-hero-content h1 {
+    font-size: 2.5rem !important;
+  }
+
+  .about-floating-item {
+    display: none;
+  }
+
+  .developer-card {
+    margin-bottom: 2rem;
+  }
+
+  .contact-service-card {
+    margin-bottom: 2rem;
+  }
+}
+
+/* Additional About Page Animations */
+.animate-fade-in {
+  animation: fadeIn 0.8s ease-out;
+}
+
+.delay-3 {
+  animation-delay: 0.6s;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Enhanced Tech Stack Items */
+.tech-item {
+  transition: all 0.3s ease;
+  background: white;
+  border: 2px solid #e9ecef !important;
+}
+
+.tech-item:hover {
+  transform: translateY(-5px) scale(1.05);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  border-color: #ff6b35 !important;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%) !important;
+}
+
+/* Enhanced Team Photo Section */
+.team-photo:hover {
+  transform: scale(1.02) !important;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.25) !important;
 }
