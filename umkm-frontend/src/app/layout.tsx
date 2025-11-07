@@ -3,6 +3,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 import './globals.css';
 import { Inter } from 'next/font/google';
 import BootstrapClient from '@/components/BootstrapClient';
+import Navbar from '@/components/Navbar';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 
@@ -39,90 +40,7 @@ export default function RootLayout({
       <body className={`${inter.className} d-flex flex-column h-100`}>
         {/* Navigation Header */}
         <header>
-          <nav className="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
-            <div className="container">
-              <Link className="navbar-brand fw-bold d-flex align-items-center" href="/">
-                <span className="fs-4 me-2">🍗</span>
-                <div>
-                  <div>Sabana</div>
-                  <small className="fw-normal opacity-75" style={{ fontSize: '0.7rem' }}>
-                    Fried Chicken
-                  </small>
-                </div>
-              </Link>
-              
-              <button 
-                className="navbar-toggler" 
-                type="button" 
-                data-bs-toggle="collapse" 
-                data-bs-target="#navbarNav"
-                aria-controls="navbarNav"
-                aria-expanded="false"
-                aria-label="Toggle navigation"
-              >
-                <span className="navbar-toggler-icon"></span>
-              </button>
-              
-              <div className="collapse navbar-collapse" id="navbarNav">
-                <ul className="navbar-nav me-auto">
-                  <li className="nav-item">
-                    <Link
-                      className="nav-link active" 
-                      href="/"
-                      aria-current="page"
-                    >
-                      🏠 Home
-                    </Link>
-                  </li>
-                  <li className="nav-item">
-                    <Link
-                      className="nav-link" 
-                      href="/about"
-                    >
-                      👥 Tentang Kami
-                    </Link>
-                  </li>
-                  <li className="nav-item">
-                    <a
-                      className="nav-link"
-                      href="#menu"
-                    >
-                      🍽️ Menu
-                    </a>
-                  </li>
-                  <li className="nav-item">
-                    <a 
-                      className="nav-link" 
-                      href="#contact"
-                    >
-                      📞 Kontak
-                    </a>
-                  </li>
-                </ul>
-                
-                <ul className="navbar-nav ms-auto">
-                  <li className="nav-item">
-                    <Link
-                      className="nav-link" 
-                      href="/dashboard"
-                    >
-                      🔐 Admin Dashboard
-                    </Link>
-                  </li>
-                  <li className="nav-item">
-                    <a 
-                      className="btn btn-outline-light btn-sm ms-2" 
-                      href="https://wa.me/6281234567890"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      📱 Pesan Sekarang
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </nav>
+          <Navbar />
         </header>
 
         {/* Main Content */}
@@ -135,20 +53,19 @@ export default function RootLayout({
           <div className="container">
             <div className="row">
               <div className="col-lg-4 mb-4 mb-lg-0">
-                <h5 className="fw-bold mb-3">🍗 Sabana Fried Chicken</h5>
+                <h5 className="fw-bold mb-3">Sabana Fried Chicken</h5>
                 <p className="text-light opacity-75">
-                  Menyajikan berbagai menu makanan dan minuman terbaik dengan bahan-bahan fresh 
-                  dan cita rasa yang menggugah selera.
+                  Sabana Fried Chicken hadir untuk memenuhi kebutuhan masyarakat Indonesia dengan produk Fried Chicken yang Halal, Lezat dan Berkualitas.
                 </p>
                 <div className="social-links">
                   <a href="#" className="text-light me-3 opacity-75 hover-opacity-100 text-decoration-none">
-                    📘 Facebook
+                    Facebook
                   </a>
                   <a href="#" className="text-light me-3 opacity-75 hover-opacity-100 text-decoration-none">
-                    📷 Instagram
+                    Instagram
                   </a>
                   <a href="#" className="text-light opacity-75 hover-opacity-100 text-decoration-none">
-                    🎵 TikTok
+                    TikTok
                   </a>
                 </div>
               </div>
@@ -221,18 +138,8 @@ export default function RootLayout({
                 <ul className="list-unstyled text-light opacity-75">
                   <li className="mb-2">Senin - Jumat: 08:00 - 22:00</li>
                   <li className="mb-2">Sabtu - Minggu: 09:00 - 23:00</li>
-                  <li className="mb-2">🚚 Pesan Antar 24 Jam</li>
+                  <li className="mb-2">Pesan Antar 24 Jam</li>
                 </ul>
-                <div className="mt-3">
-                  <a 
-                    href="https://wa.me/6281234567890"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="btn btn-success btn-sm"
-                  >
-                    📱 Pesan via WhatsApp
-                  </a>
-                </div>
               </div>
             </div>
             
@@ -265,7 +172,7 @@ export default function RootLayout({
               animation: 'pulse 2s infinite'
             }}
           >
-            <span className="fs-5 me-2">📱</span>
+            <span className="fs-5 me-2">✆</span>
             <div className="d-flex flex-column text-start">
               <small className="opacity-75" style={{ fontSize: '0.7rem', lineHeight: '1' }}>Pesan Sekarang</small>
               <strong style={{ fontSize: '0.8rem', lineHeight: '1' }}>WhatsApp</strong>

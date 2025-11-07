@@ -11,47 +11,47 @@ export default function About() {
       role: 'Full Stack Developer',
       email: 'alvin@gmail.com',
       whatsapp: '+62 812-3456-7891',
-      photo: '/images/',
+      photo: '/images/developer-1.jpg',
       skills: ['Laravel', 'Next.js', 'MongoDB', 'TypeScript'],
       description: 'Berpengalaman dalam pengembangan web aplikasi selama 3 tahun.'
     },
     {
       id: 2,
       name: 'Rendy Matheu',
-      role: 'Frontend Developer',
+      role: 'Full Stack Developer',
       email: 'rendymatheu52@gmail.com',
       whatsapp: '+62 821-7737-3376',
-      photo: '/images/',
+      photo: '/images/developer-2.jpg',
       skills: ['Next.js', 'React', 'Bootstrap', 'CSS'],
-      description: 'Spesialis dalam membuat UI/UX yang menarik dan user-friendly.'
+      description: 'Berpengalaman dalam database dan pengembangan web.'
     },
     {
       id: 3,
-      name: 'Budi Santoso',
-      role: 'Backend Developer',
-      email: 'budi.santoso@umkmdelicious.com',
+      name: 'Muhammad Satria Rizky',
+      role: 'Frontend Developer, UI/UX Designer',
+      email: 'muhammmad.535240002@stu.untar.ac.id',
       whatsapp: '+62 812-3456-7893',
       photo: '/images/developer-3.jpg',
-      skills: ['Laravel', 'MongoDB', 'REST API', 'PHP'],
-      description: 'Ahli dalam membangun sistem backend yang scalable dan aman.'
+      skills: ['Javascript', 'Figma', 'CSS', 'PHP', 'HTML'],
+      description: 'Ahli dalam membuat UI/UX yang menarik.'
     },
     {
       id: 4,
-      name: 'Maya Sari',
-      role: 'UI/UX Designer',
-      email: 'maya.sari@umkmdelicious.com',
-      whatsapp: '+62 812-3456-7894',
+      name: 'Muhammad Aldi Rifky Pasaribu',
+      role: 'UI/UX Designer, Debugger',
+      email: 'muhammmad.535240005@stu.untar.ac.id',
+      whatsapp: '+62 895-3600-43140',
       photo: '/images/developer-4.jpg',
-      skills: ['Figma', 'Adobe XD', 'Prototyping', 'User Research'],
+      skills: ['Figma', 'Adobe XD', 'Javascript', 'User Research'],
       description: 'Menciptakan pengalaman pengguna yang optimal dan desain yang estetik.'
     },
     {
       id: 5,
-      name: 'Rizki Pratama',
-      role: 'DevOps Engineer',
+      name: 'Angelo',
+      role: 'Tester',
       email: 'rizki.pratama@umkmdelicious.com',
       whatsapp: '+62 812-3456-7895',
-      photo: '/images/developer-5.jpg',
+      photo: '/images/developer-5.png',
       skills: ['Docker', 'CI/CD', 'AWS', 'Server Management'],
       description: 'Memastikan aplikasi berjalan lancar dan terdeploy dengan baik.'
     }
@@ -60,7 +60,7 @@ export default function About() {
   return (
     <div className="bg-light">
       {/* Header Section */}
-      <section className="py-5 bg-primary text-white">
+      <section className="py-5 mt-5 bg-primary text-white">
         <div className="container">
           <div className="row">
             <div className="col-lg-8 mx-auto text-center">
@@ -89,12 +89,14 @@ export default function About() {
                   <div className="card-body">
                     <div className="row">
                       <div className="col-md-4 text-center">
-                        <div 
-                          className="developer-photo bg-secondary rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center text-white"
-                          style={{ width: '120px', height: '120px' }}
-                        >
-                          <span>[Foto {developer.name}]</span>
-                        </div>
+                        <Image
+                          src={developer.photo}
+                          alt={`Foto ${developer.name}`}
+                          width={120}
+                          height={120}
+                          className="rounded-circle mx-auto mb-3"
+                          style={{ objectFit: 'cover' }}
+                        />
                         <h6 className="fw-bold">{developer.role}</h6>
                       </div>
                       <div className="col-md-8">
@@ -114,13 +116,13 @@ export default function About() {
 
                         <div className="contact-info">
                           <div className="mb-2">
-                            <strong>📧 Email:</strong>
+                            <strong>Email:</strong>
                             <a href={`mailto:${developer.email}`} className="text-decoration-none ms-2">
                               {developer.email}
                             </a>
                           </div>
                           <div className="mb-2">
-                            <strong>📱 WhatsApp:</strong>
+                            <strong>WhatsApp:</strong>
                             <a 
                               href={`https://wa.me/${developer.whatsapp.replace('+', '').replace(/\s/g, '')}`}
                               target="_blank"
@@ -139,13 +141,13 @@ export default function About() {
                             rel="noopener noreferrer"
                             className="btn btn-success btn-sm me-2"
                           >
-                            💬 WhatsApp
+                            WhatsApp
                           </a>
                           <a 
                             href={`mailto:${developer.email}`}
                             className="btn btn-outline-primary btn-sm"
                           >
-                            📧 Email
+                            Email
                           </a>
                         </div>
                       </div>
