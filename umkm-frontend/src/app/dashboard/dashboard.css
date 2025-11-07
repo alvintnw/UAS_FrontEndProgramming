@@ -952,6 +952,7 @@ td {
   margin-left: 280px;
   padding: 30px;
   min-height: 100vh;
+  padding-top: 100px; /* Add top padding to account for fixed navbar */
 }
 
 .header {
