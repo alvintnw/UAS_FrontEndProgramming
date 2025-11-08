@@ -3,7 +3,8 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import './dashboard.css'; 
+import Navbar from '@/components/Navbar';
+import './dashboard.css';
 
 export default function DashboardLayout({
   children,
@@ -68,7 +69,7 @@ function DashboardAuthenticatedLayout({
   mobileMenuOpen: boolean;
   setMobileMenuOpen: (open: boolean) => void;
 }) {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<{ name: string } | null>(null);
   const router = useRouter();
   const pathname = usePathname();
 
@@ -89,8 +90,11 @@ function DashboardAuthenticatedLayout({
 
   return (
     <div className="dashboard-container">
+      {/* Navbar from homepage */}
+      <Navbar />
+
       {/* Mobile Menu Button */}
-      <button 
+      <button
         className="mobile-menu-btn"
         onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
       >
@@ -147,7 +151,7 @@ function DashboardAuthenticatedLayout({
           </li>
         </ul>
       </div>
-      
+
       {/* Main Content */}
       <div className="main-content">
         <div className="header">
@@ -163,8 +167,8 @@ function DashboardAuthenticatedLayout({
             </h1>
           </div>
           <div className="user-info">
-            <img 
-              src={`https://ui-avatars.com/api/?name=${user?.name || 'Admin'}&background=0D8ABC&color=fff`} 
+            <img
+              src={`https://ui-avatars.com/api/?name=${user?.name || 'Admin'}&background=0D8ABC&color=fff`}
               alt="Admin"
             />
             <div>
@@ -180,7 +184,7 @@ function DashboardAuthenticatedLayout({
         .mobile-menu-btn {
           display: none;
         }
-        
+
         @media (max-width: 768px) {
           .mobile-menu-btn {
             display: block;

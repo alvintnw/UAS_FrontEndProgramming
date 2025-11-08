@@ -17,34 +17,48 @@ export default function SettingsPage() {
   });
 
   const [activeTab, setActiveTab] = useState('general');
+  const [isSaving, setIsSaving] = useState(false);
 
-  const handleSave = (e: React.FormEvent) => {
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    alert('Pengaturan berhasil disimpan!');
+    setIsSaving(true);
+    // Simulate API call
+    setTimeout(() => {
+      setIsSaving(false);
+      alert('Pengaturan berhasil disimpan!');
+    }, 1500);
   };
 
   const tabs = [
-    { id: 'general', label: 'Umum', icon: '🏪' },
-    { id: 'operational', label: 'Operasional', icon: '⚙️' },
-    { id: 'integrations', label: 'Integrasi', icon: '🔗' },
-    { id: 'security', label: 'Keamanan', icon: '🔒' }
+    { id: 'general', label: 'Umum' },
+    { id: 'operational', label: 'Operasional' },
+    { id: 'integrations', label: 'Integrasi' },
+    { id: 'security', label: 'Keamanan' }
   ];
 
   return (
     <div className="p-6">
       {/* Header Section */}
-      <div className="bg-gradient-to-br from-white via-blue-50/30 to-purple-50/30 rounded-2xl shadow-2xl p-6 mb-6 border border-white/50 backdrop-blur-sm">
-        <div className="flex justify-between items-center">
-          <div>
-            <h2 className="text-3xl font-bold text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text mb-2">
-              Pengaturan Toko
-            </h2>
-            <p className="text-gray-600 font-medium">Kelola semua pengaturan bisnis Anda di satu tempat</p>
+      <div className="welcome-section">
+        <div className="welcome-content">
+          <h2 className="welcome-title">
+            Pengaturan <span className="brand-text">Toko</span>
+          </h2>
+          <p className="welcome-subtitle">
+            Kelola semua pengaturan bisnis Anda di satu tempat
+          </p>
+          <div className="welcome-stats">
+            <div className="stat-item">
+              <div className="stat-number">Auto</div>
+              <div className="stat-label">Save</div>
+            </div>
           </div>
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full animate-pulse"></div>
-            <span className="text-sm font-medium text-gray-600">Semua perubahan tersimpan</span>
-          </div>
+        </div>
+        <div className="welcome-decoration">
+          <div className="floating-icon icon-1">⚙️</div>
+          <div className="floating-icon icon-2">🔧</div>
+          <div className="floating-icon icon-3">🛠️</div>
+          <div className="floating-icon icon-4">🔒</div>
         </div>
       </div>
 
@@ -61,7 +75,6 @@ export default function SettingsPage() {
                   : 'bg-white/60 text-gray-700 hover:bg-white/80 hover:shadow-md'
               }`}
             >
-              <span className="text-lg">{tab.icon}</span>
               {tab.label}
             </button>
           ))}
@@ -71,58 +84,66 @@ export default function SettingsPage() {
       <form onSubmit={handleSave} className="space-y-6">
         {/* General Settings */}
         {activeTab === 'general' && (
-          <div className="bg-gradient-to-br from-white via-blue-50/30 to-purple-50/30 rounded-2xl shadow-2xl p-6 border border-white/50 backdrop-blur-sm">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-12 h-12 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full flex items-center justify-center">
-                <span className="text-2xl">🏪</span>
+          <div className="bg-gradient-to-br from-white via-blue-50/30 to-purple-50/30 rounded-2xl shadow-2xl p-8 border border-white/50 backdrop-blur-sm">
+            <div className="flex items-center gap-4 mb-8">
+              <div className="w-14 h-14 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full flex items-center justify-center shadow-lg">
+                <span className="text-3xl">🏪</span>
               </div>
               <div>
-                <h3 className="text-xl font-bold text-gray-900">Informasi Toko</h3>
-                <p className="text-gray-600">Informasi dasar tentang bisnis Anda</p>
+                <h3 className="text-2xl font-bold text-gray-900 mb-1">Informasi Toko</h3>
+                <p className="text-gray-600 text-base">Informasi dasar tentang bisnis Anda</p>
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <label className="block text-sm font-semibold text-gray-700">Nama Toko</label>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="space-y-3">
+                <label className="flex items-center gap-2 text-sm font-semibold text-gray-700">
+                  Nama Toko
+                </label>
                 <input
                   type="text"
                   value={settings.storeName}
                   onChange={(e) => setSettings({...settings, storeName: e.target.value})}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white/80 backdrop-blur-sm transition-all duration-300"
+                  className="w-full px-5 py-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white/90 backdrop-blur-sm transition-all duration-300 text-base shadow-sm hover:shadow-md"
                   placeholder="Masukkan nama toko"
                 />
               </div>
 
-              <div className="space-y-2">
-                <label className="block text-sm font-semibold text-gray-700">Email</label>
+              <div className="space-y-3">
+                <label className="flex items-center gap-2 text-sm font-semibold text-gray-700">
+                  Email
+                </label>
                 <input
                   type="email"
                   value={settings.storeEmail}
                   onChange={(e) => setSettings({...settings, storeEmail: e.target.value})}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white/80 backdrop-blur-sm transition-all duration-300"
+                  className="w-full px-5 py-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white/90 backdrop-blur-sm transition-all duration-300 text-base shadow-sm hover:shadow-md"
                   placeholder="email@toko.com"
                 />
               </div>
 
-              <div className="space-y-2">
-                <label className="block text-sm font-semibold text-gray-700">Telepon</label>
+              <div className="space-y-3">
+                <label className="flex items-center gap-2 text-sm font-semibold text-gray-700">
+                  Telepon
+                </label>
                 <input
                   type="text"
                   value={settings.storePhone}
                   onChange={(e) => setSettings({...settings, storePhone: e.target.value})}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white/80 backdrop-blur-sm transition-all duration-300"
+                  className="w-full px-5 py-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white/90 backdrop-blur-sm transition-all duration-300 text-base shadow-sm hover:shadow-md"
                   placeholder="+6281234567890"
                 />
               </div>
 
-              <div className="space-y-2 md:col-span-2">
-                <label className="block text-sm font-semibold text-gray-700">Alamat Lengkap</label>
+              <div className="space-y-3 md:col-span-2">
+                <label className="flex items-center gap-2 text-sm font-semibold text-gray-700">
+                  Alamat Lengkap
+                </label>
                 <textarea
                   value={settings.storeAddress}
                   onChange={(e) => setSettings({...settings, storeAddress: e.target.value})}
-                  rows={4}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white/80 backdrop-blur-sm transition-all duration-300 resize-none"
+                  rows={5}
+                  className="w-full px-5 py-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white/90 backdrop-blur-sm transition-all duration-300 resize-none text-base shadow-sm hover:shadow-md"
                   placeholder="Jl. Contoh No. 123, Kota, Provinsi, Kode Pos"
                 />
               </div>
@@ -132,52 +153,56 @@ export default function SettingsPage() {
 
         {/* Operational Settings */}
         {activeTab === 'operational' && (
-          <div className="bg-gradient-to-br from-white via-blue-50/30 to-purple-50/30 rounded-2xl shadow-2xl p-6 border border-white/50 backdrop-blur-sm">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center">
-                <span className="text-2xl">⚙️</span>
+          <div className="bg-gradient-to-br from-white via-blue-50/30 to-purple-50/30 rounded-2xl shadow-2xl p-8 border border-white/50 backdrop-blur-sm">
+            <div className="flex items-center gap-4 mb-8">
+              <div className="w-14 h-14 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center shadow-lg">
+                <span className="text-3xl">⚙️</span>
               </div>
               <div>
-                <h3 className="text-xl font-bold text-gray-900">Jam Operasional</h3>
-                <p className="text-gray-600">Atur waktu buka dan tutup toko</p>
+                <h3 className="text-2xl font-bold text-gray-900 mb-1">Jam Operasional</h3>
+                <p className="text-gray-600 text-base">Atur waktu buka dan tutup toko</p>
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <label className="block text-sm font-semibold text-gray-700">Jam Buka</label>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="space-y-3">
+                <label className="flex items-center gap-2 text-sm font-semibold text-gray-700">
+                  Jam Buka
+                </label>
                 <input
                   type="time"
                   value={settings.openingHours}
                   onChange={(e) => setSettings({...settings, openingHours: e.target.value})}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/80 backdrop-blur-sm transition-all duration-300"
+                  className="w-full px-5 py-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/90 backdrop-blur-sm transition-all duration-300 text-base shadow-sm hover:shadow-md"
                 />
               </div>
 
-              <div className="space-y-2">
-                <label className="block text-sm font-semibold text-gray-700">Jam Tutup</label>
+              <div className="space-y-3">
+                <label className="flex items-center gap-2 text-sm font-semibold text-gray-700">
+                  Jam Tutup
+                </label>
                 <input
                   type="time"
                   value={settings.closingHours}
                   onChange={(e) => setSettings({...settings, closingHours: e.target.value})}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/80 backdrop-blur-sm transition-all duration-300"
+                  className="w-full px-5 py-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/90 backdrop-blur-sm transition-all duration-300 text-base shadow-sm hover:shadow-md"
                 />
               </div>
             </div>
 
-            <div className="mt-8">
-              <h4 className="text-lg font-semibold text-gray-900 mb-4">Preferensi Operasional</h4>
-              <div className="space-y-4">
-                <div className="flex items-center justify-between p-4 bg-gradient-to-r from-green-50/50 to-emerald-50/50 rounded-xl border border-green-200/50">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full flex items-center justify-center">
-                      <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="mt-10">
+              <h4 className="text-xl font-bold text-gray-900 mb-6">Preferensi Operasional</h4>
+              <div className="space-y-6">
+                <div className="flex items-center justify-between p-6 bg-gradient-to-r from-green-50/50 to-emerald-50/50 rounded-xl border border-green-200/50 hover:shadow-lg transition-all duration-300">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full flex items-center justify-center shadow-md">
+                      <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-5 5V17zM4.868 12.683A17.925 17.925 0 0112 21c7.962 0 12-1.21 12-2.683m-12 2.683a17.925 17.925 0 01-7.132-8.317M12 21c4.411 0 8-4.03 8-9s-3.589-9-8-9-8 4.03-8 9a9.06 9.06 0 001.832 5.683L4 21l4.868-8.317z" />
                       </svg>
                     </div>
                     <div>
-                      <div className="font-semibold text-gray-900">Notifikasi Pesanan</div>
-                      <div className="text-sm text-gray-600">Dapatkan notifikasi real-time untuk pesanan baru</div>
+                      <div className="font-bold text-gray-900 text-lg">Notifikasi Pesanan</div>
+                      <div className="text-gray-600">Dapatkan notifikasi real-time untuk pesanan baru</div>
                     </div>
                   </div>
                   <label className="relative inline-flex items-center cursor-pointer">
@@ -187,20 +212,20 @@ export default function SettingsPage() {
                       onChange={(e) => setSettings({...settings, notificationsEnabled: e.target.checked})}
                       className="sr-only peer"
                     />
-                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gradient-to-r peer-checked:from-blue-500 peer-checked:to-cyan-500"></div>
+                    <div className="w-12 h-7 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-gradient-to-r peer-checked:from-blue-500 peer-checked:to-cyan-500"></div>
                   </label>
                 </div>
 
-                <div className="flex items-center justify-between p-4 bg-gradient-to-r from-purple-50/50 to-pink-50/50 rounded-xl border border-purple-200/50">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
-                      <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="flex items-center justify-between p-6 bg-gradient-to-r from-purple-50/50 to-pink-50/50 rounded-xl border border-purple-200/50 hover:shadow-lg transition-all duration-300">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center shadow-md">
+                      <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
                       </svg>
                     </div>
                     <div>
-                      <div className="font-semibold text-gray-900">Backup Otomatis</div>
-                      <div className="text-sm text-gray-600">Backup data secara otomatis setiap hari</div>
+                      <div className="font-bold text-gray-900 text-lg">Backup Otomatis</div>
+                      <div className="text-gray-600">Backup data secara otomatis setiap hari</div>
                     </div>
                   </div>
                   <label className="relative inline-flex items-center cursor-pointer">
@@ -210,7 +235,7 @@ export default function SettingsPage() {
                       onChange={(e) => setSettings({...settings, autoBackup: e.target.checked})}
                       className="sr-only peer"
                     />
-                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gradient-to-r peer-checked:from-purple-500 peer-checked:to-pink-500"></div>
+                    <div className="w-12 h-7 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-gradient-to-r peer-checked:from-purple-500 peer-checked:to-pink-500"></div>
                   </label>
                 </div>
               </div>
@@ -348,12 +373,28 @@ export default function SettingsPage() {
         <div className="flex justify-end">
           <button
             type="submit"
-            className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:from-indigo-600 hover:via-purple-600 hover:to-pink-600 text-white px-8 py-4 rounded-xl font-bold transition-all duration-300 flex items-center gap-3 shadow-xl hover:shadow-2xl transform hover:-translate-y-1 hover:scale-105 border-2 border-indigo-400"
+            disabled={isSaving}
+            className={`px-8 py-4 rounded-xl font-bold transition-all duration-300 flex items-center gap-3 shadow-xl hover:shadow-2xl transform hover:-translate-y-1 hover:scale-105 border-2 ${
+              isSaving
+                ? 'bg-gray-400 text-gray-200 cursor-not-allowed'
+                : 'bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:from-indigo-600 hover:via-purple-600 hover:to-pink-600 text-white border-indigo-400'
+            }`}
           >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-            </svg>
-            Simpan Semua Pengaturan
+            {isSaving ? (
+              <>
+                <svg className="w-6 h-6 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                Menyimpan...
+              </>
+            ) : (
+              <>
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                Simpan Semua Pengaturan
+              </>
+            )}
           </button>
         </div>
       </form>

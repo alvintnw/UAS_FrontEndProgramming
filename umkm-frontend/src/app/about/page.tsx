@@ -94,7 +94,7 @@ export default function About() {
                 </h1>
 
                 <p className="lead mb-4 fs-5 text-light lh-base">
-                  Tim developer profesional yang berdedikasi dalam membangun website UMKM Delicious
+                  Tim developer profesional yang berdedikasi dalam membangun website Sabana
                   dengan <strong>teknologi terkini</strong> dan standar kualitas tertinggi.
                 </p>
 
@@ -147,7 +147,7 @@ export default function About() {
                         <h6 className="fw-bold text-primary">{developer.role}</h6>
                       </div>
                       <div className="col-md-8">
-                        <h5 className="card-title fw-bold gradient-text-secondary mb-3">{developer.name}</h5>
+                        <h4 className="card-title fw-bold gradient-text-secondary mb-3">{developer.name}</h4>
                         <p className="card-text text-muted mb-3">{developer.description}</p>
 
                         <div className="mb-3">
@@ -214,7 +214,7 @@ export default function About() {
             <div className="col-lg-6 slide-in-left">
               <h3 className="fw-bold mb-4 gradient-text-secondary">Kolaborasi dengan Mitra UMKM</h3>
               <p className="text-muted mb-4">
-                Kami bekerja sama secara erat dengan pemilik UMKM Delicious untuk memahami
+                Kami bekerja sama secara erat dengan pemilik Sabana untuk memahami
                 kebutuhan bisnis dan menciptakan solusi digital yang tepat guna.
               </p>
               <p className="text-muted mb-4">

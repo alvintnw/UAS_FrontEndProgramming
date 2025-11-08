@@ -12,6 +12,7 @@ export default function ProductsPage() {
   ]);
 
   const [showForm, setShowForm] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [editingProduct, setEditingProduct] = useState<any>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('Semua');
@@ -50,6 +51,7 @@ export default function ProductsPage() {
     setShowForm(false);
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleEditProduct = (product: any) => {
     setEditingProduct(product);
     setFormData({
@@ -230,84 +232,84 @@ export default function ProductsPage() {
       </div>
 
       {showForm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg border border-gray-200">
-            <div className="p-6 border-b border-gray-200 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-t-2xl">
-              <h3 className="text-xl font-bold text-white">{editingProduct ? 'Edit Menu' : 'Tambah Menu Baru'}</h3>
-              <p className="text-indigo-100 text-sm mt-1">Kelola informasi menu dengan lengkap</p>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 animate-fadeIn">
+          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl border border-orange-200 animate-slideIn">
+            <div className="p-8 border-b border-orange-200 bg-gradient-to-r from-orange-400 via-orange-500 to-red-500 rounded-t-3xl">
+              <h3 className="text-2xl font-bold text-white">{editingProduct ? 'Edit Menu' : 'Tambah Menu Baru'}</h3>
+              <p className="text-orange-100 text-sm mt-2">Kelola informasi menu dengan lengkap</p>
             </div>
-            <form onSubmit={editingProduct ? handleUpdateProduct : handleAddProduct} className="p-6">
-              <div className="mb-4">
-                <label className="block text-sm font-bold text-gray-700 mb-2">Nama Menu</label>
-                <input
-                  type="text"
-                  value={formData.name}
-                  onChange={(e) => setFormData({...formData, name: e.target.value})}
-                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-gray-50 transition-all duration-300"
-                  required
-                  placeholder="Masukkan nama menu"
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block text-sm font-bold text-gray-700 mb-2">Kategori</label>
-                <select
-                  value={formData.category}
-                  onChange={(e) => setFormData({...formData, category: e.target.value})}
-                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-gray-50 transition-all duration-300"
-                >
-                  <option value="Makanan">🍽️ Makanan</option>
-                  <option value="Minuman">🥤 Minuman</option>
-                  <option value="Snack">🍿 Snack</option>
-                  <option value="Dessert">🍰 Dessert</option>
-                </select>
-              </div>
-              <div className="grid grid-cols-2 gap-4 mb-4">
+            <form onSubmit={editingProduct ? handleUpdateProduct : handleAddProduct} className="p-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-bold text-gray-700 mb-3">Nama Menu</label>
+                  <input
+                    type="text"
+                    value={formData.name}
+                    onChange={(e) => setFormData({...formData, name: e.target.value})}
+                    className="w-full px-5 py-4 border-2 border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-gray-50 transition-all duration-300 text-base"
+                    required
+                    placeholder="Masukkan nama menu"
+                  />
+                </div>
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-bold text-gray-700 mb-3">Kategori</label>
+                  <select
+                    value={formData.category}
+                    onChange={(e) => setFormData({...formData, category: e.target.value})}
+                    className="w-full px-5 py-4 border-2 border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-gray-50 transition-all duration-300 text-base"
+                  >
+                    <option value="Makanan">🍽️ Makanan</option>
+                    <option value="Minuman">🥤 Minuman</option>
+                    <option value="Snack">🍿 Snack</option>
+                    <option value="Dessert">🍰 Dessert</option>
+                  </select>
+                </div>
                 <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-2">Harga</label>
+                  <label className="block text-sm font-bold text-gray-700 mb-3">Harga</label>
                   <input
                     type="number"
                     value={formData.price}
                     onChange={(e) => setFormData({...formData, price: e.target.value})}
-                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-gray-50 transition-all duration-300"
+                    className="w-full px-5 py-4 border-2 border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-gray-50 transition-all duration-300 text-base"
                     required
                     min="0"
                     placeholder="Rp"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-2">Stok</label>
+                  <label className="block text-sm font-bold text-gray-700 mb-3">Stok</label>
                   <input
                     type="number"
                     value={formData.stock}
                     onChange={(e) => setFormData({...formData, stock: e.target.value})}
-                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-gray-50 transition-all duration-300"
+                    className="w-full px-5 py-4 border-2 border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-gray-50 transition-all duration-300 text-base"
                     required
                     min="0"
                     placeholder="Jumlah"
                   />
                 </div>
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-bold text-gray-700 mb-3">Deskripsi</label>
+                  <textarea
+                    value={formData.description}
+                    onChange={(e) => setFormData({...formData, description: e.target.value})}
+                    className="w-full px-5 py-4 border-2 border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-gray-50 transition-all duration-300 resize-none text-base"
+                    rows={4}
+                    placeholder="Deskripsikan menu ini..."
+                  />
+                </div>
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-bold text-gray-700 mb-3">URL Gambar</label>
+                  <input
+                    type="url"
+                    value={formData.image}
+                    onChange={(e) => setFormData({...formData, image: e.target.value})}
+                    className="w-full px-5 py-4 border-2 border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-gray-50 transition-all duration-300 text-base"
+                    placeholder="https://example.com/image.jpg"
+                  />
+                </div>
               </div>
-              <div className="mb-4">
-                <label className="block text-sm font-bold text-gray-700 mb-2">Deskripsi</label>
-                <textarea
-                  value={formData.description}
-                  onChange={(e) => setFormData({...formData, description: e.target.value})}
-                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-gray-50 transition-all duration-300 resize-none"
-                  rows={3}
-                  placeholder="Deskripsikan menu ini..."
-                />
-              </div>
-              <div className="mb-6">
-                <label className="block text-sm font-bold text-gray-700 mb-2">URL Gambar</label>
-                <input
-                  type="url"
-                  value={formData.image}
-                  onChange={(e) => setFormData({...formData, image: e.target.value})}
-                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-gray-50 transition-all duration-300"
-                  placeholder="https://example.com/image.jpg"
-                />
-              </div>
-              <div className="flex gap-3 justify-end">
+              <div className="flex gap-4 justify-end pt-4 border-t border-gray-200">
                 <button
                   type="button"
                   onClick={() => {
@@ -315,13 +317,13 @@ export default function ProductsPage() {
                     setEditingProduct(null);
                     setFormData({ name: '', category: 'Makanan', price: '', stock: '', description: '', image: '' });
                   }}
-                  className="px-6 py-3 text-gray-600 border-2 border-gray-300 rounded-xl hover:bg-gray-50 transition-all duration-300 font-bold"
+                  className="px-8 py-4 text-gray-600 border-2 border-gray-300 rounded-2xl hover:bg-gray-50 transition-all duration-300 font-bold text-base"
                 >
                   Batal
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-3 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white rounded-xl hover:from-indigo-600 hover:via-purple-600 hover:to-pink-600 transition-all duration-300 font-bold shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                  className="px-8 py-4 bg-gradient-to-r from-orange-400 via-orange-500 to-red-500 text-white rounded-2xl hover:from-orange-500 hover:via-red-500 hover:to-red-600 transition-all duration-300 font-bold shadow-lg hover:shadow-xl transform hover:-translate-y-1 text-base"
                 >
                   {editingProduct ? 'Update Menu' : 'Simpan Menu'}
                 </button>
@@ -344,7 +346,7 @@ export default function ProductsPage() {
             </tr>
           </thead>
           <tbody>
-            {products.map((product, index) => (
+            {filteredProducts.map((product) => (
               <tr key={product.id}>
                 <td className="flex items-center gap-3">
                   <div className="product-id">#{product.id.toString().padStart(3, '0')}</div>
