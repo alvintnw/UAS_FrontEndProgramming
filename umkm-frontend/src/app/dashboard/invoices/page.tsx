@@ -43,15 +43,116 @@ export default function InvoicesPage() {
   };
 
   return (
-    <div className="p-6">
+    <div>
+      {/* Welcome Section */}
+      <div className="welcome-section">
+        <div className="welcome-content">
+          <h2 className="welcome-title">
+            Manajemen <span className="brand-text">Pesanan</span>
+          </h2>
+          <p className="welcome-subtitle">
+            Kelola semua pesanan pelanggan dengan mudah dan efisien
+          </p>
+          <div className="welcome-stats">
+            <div className="stat-item">
+              <div className="stat-number">{orders.length}</div>
+              <div className="stat-label">Total Pesanan</div>
+            </div>
+            <div className="stat-item">
+              <div className="stat-number">{orders.filter(o => o.status === 'Menunggu').length}</div>
+              <div className="stat-label">Menunggu</div>
+            </div>
+            <div className="stat-item">
+              <div className="stat-number">{orders.filter(o => o.status === 'Diproses').length}</div>
+              <div className="stat-label">Diproses</div>
+            </div>
+          </div>
+        </div>
+        <div className="welcome-decoration">
+          <div className="floating-icon icon-1">📋</div>
+          <div className="floating-icon icon-2">🛒</div>
+          <div className="floating-icon icon-3">✅</div>
+          <div className="floating-icon icon-4">🚚</div>
+        </div>
+      </div>
+
+      {/* Stats Cards */}
+      <div className="cards">
+        <div className="card">
+          <div className="card-header">
+            <h3 className="card-title">Total Pesanan</h3>
+            <div className="card-icon orders">
+              <i className="fas fa-shopping-cart"></i>
+            </div>
+          </div>
+          <div className="card-value">{orders.length}</div>
+          <div className="card-change positive">
+            <i className="fas fa-arrow-up"></i> {orders.filter(o => o.status === 'Selesai').length} selesai
+          </div>
+        </div>
+
+        <div className="card">
+          <div className="card-header">
+            <h3 className="card-title">Pendapatan</h3>
+            <div className="card-icon revenue">
+              <i className="fas fa-dollar-sign"></i>
+            </div>
+          </div>
+          <div className="card-value">Rp {orders.reduce((sum, order) => sum + order.total, 0).toLocaleString('id-ID')}</div>
+          <div className="card-change positive">
+            <i className="fas fa-arrow-up"></i> {Math.round((orders.filter(o => o.status === 'Selesai').length / orders.length) * 100)}% konversi
+          </div>
+        </div>
+
+        <div className="card">
+          <div className="card-header">
+            <h3 className="card-title">Menunggu</h3>
+            <div className="card-icon customers">
+              <i className="fas fa-clock"></i>
+            </div>
+          </div>
+          <div className="card-value">{orders.filter(o => o.status === 'Menunggu').length}</div>
+          <div className="card-change negative">
+            <i className="fas fa-exclamation-triangle"></i> Perlu perhatian
+          </div>
+        </div>
+
+        <div className="card">
+          <div className="card-header">
+            <h3 className="card-title">Selesai</h3>
+            <div className="card-icon products">
+              <i className="fas fa-check-circle"></i>
+            </div>
+          </div>
+          <div className="card-value">{orders.filter(o => o.status === 'Selesai').length}</div>
+          <div className="card-change positive">
+            <i className="fas fa-arrow-up"></i> Hari ini
+          </div>
+        </div>
+      </div>
+
       {/* Header Section */}
-      <div className="bg-gradient-to-br from-white via-blue-50/30 to-purple-50/30 rounded-2xl shadow-2xl p-6 mb-6 border border-white/50 backdrop-blur-sm">
+      <div className="welcome-section">
+        <div className="welcome-content">
+          <h2 className="welcome-title">
+            Daftar <span className="brand-text">Pesanan</span>
+          </h2>
+          <p className="welcome-subtitle">Pantau dan kelola status semua pesanan</p>
+        </div>
+        <div className="welcome-decoration">
+          <div className="floating-icon icon-1">📋</div>
+          <div className="floating-icon icon-2">🛒</div>
+          <div className="floating-icon icon-3">✅</div>
+          <div className="floating-icon icon-4">🚚</div>
+        </div>
+      </div>
+
+      {/* Filter Section */}
+      <div className="card">
         <div className="flex justify-between items-center">
           <div>
-            <h2 className="text-3xl font-bold text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text mb-2">
-              Manajemen Pesanan
-            </h2>
-            <p className="text-gray-600 font-medium">Kelola semua pesanan pelanggan dengan mudah</p>
+            <h3 className="text-xl font-bold text-gray-800 mb-2">Filter Pesanan</h3>
+            <p className="text-gray-600">Pilih status pesanan yang ingin ditampilkan</p>
           </div>
           <div className="flex gap-3">
             <div className="flex items-center gap-2">
@@ -59,7 +160,7 @@ export default function InvoicesPage() {
               <select
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
-                className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white shadow-sm"
+                className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 bg-white shadow-sm"
               >
                 <option>Semua Status</option>
                 <option>Menunggu</option>
@@ -71,40 +172,40 @@ export default function InvoicesPage() {
         </div>
       </div>
 
-      <div className="bg-gradient-to-br from-white via-blue-50/30 to-purple-50/30 rounded-2xl shadow-2xl overflow-hidden border border-white/50 backdrop-blur-sm">
-        <table className="w-full">
-          <thead className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white">
+      <div className="invoices-table-container">
+        <table>
+          <thead className="bg-gradient-to-r from-red-500 to-orange-500 text-white">
             <tr>
-              <th className="px-8 py-5 text-left text-sm font-bold uppercase tracking-wider">
+              <th className="text-left text-sm font-bold uppercase tracking-wider">
                 ID Pesanan
               </th>
-              <th className="px-8 py-5 text-left text-sm font-bold uppercase tracking-wider">
+              <th className="text-left text-sm font-bold uppercase tracking-wider">
                 Pelanggan
               </th>
-              <th className="px-8 py-5 text-left text-sm font-bold uppercase tracking-wider">
+              <th className="text-left text-sm font-bold uppercase tracking-wider">
                 Tanggal
               </th>
-              <th className="px-8 py-5 text-left text-sm font-bold uppercase tracking-wider">
+              <th className="text-left text-sm font-bold uppercase tracking-wider">
                 Total
               </th>
-              <th className="px-8 py-5 text-left text-sm font-bold uppercase tracking-wider">
+              <th className="text-left text-sm font-bold uppercase tracking-wider">
                 Status
               </th>
-              <th className="px-8 py-5 text-left text-sm font-bold uppercase tracking-wider">
+              <th className="text-left text-sm font-bold uppercase tracking-wider">
                 Aksi
               </th>
             </tr>
           </thead>
           <tbody className="bg-white/60 backdrop-blur-md">
             {filteredOrders.map((order, index) => (
-              <tr key={order.id} className={`hover:bg-gradient-to-r hover:from-indigo-50/80 hover:via-purple-50/80 hover:to-pink-50/80 transition-all duration-500 transform hover:scale-[1.01] hover:shadow-lg ${index % 2 === 0 ? 'bg-white/40' : 'bg-gradient-to-r from-gray-50/30 to-blue-50/20'}`}>
-                <td className="px-8 py-6 whitespace-nowrap">
-                  <div className="font-mono text-indigo-600 font-bold text-lg">{order.id}</div>
+              <tr key={order.id} className={`hover:bg-gradient-to-r hover:from-red-50/80 hover:via-orange-50/80 hover:to-yellow-50/80 transition-all duration-300 transform hover:scale-[1.01] hover:shadow-lg ${index % 2 === 0 ? 'bg-white/40' : 'bg-gradient-to-r from-gray-50/30 to-orange-50/20'}`}>
+                <td className="whitespace-nowrap">
+                  <div className="font-mono text-red-600 font-bold text-lg">{order.id}</div>
                   <div className="text-xs text-gray-500 font-medium">{order.payment}</div>
                 </td>
-                <td className="px-8 py-6 whitespace-nowrap">
+                <td className="whitespace-nowrap">
                   <div className="flex items-center gap-3">
-                    <div className="avatar-circle bg-gradient-to-r from-purple-500 to-pink-500">
+                    <div className="avatar-circle bg-gradient-to-r from-red-500 to-orange-500">
                       {order.customer.split(' ').map(n => n[0]).join('')}
                     </div>
                     <div>
@@ -113,27 +214,27 @@ export default function InvoicesPage() {
                     </div>
                   </div>
                 </td>
-                <td className="px-8 py-6 whitespace-nowrap">
+                <td className="whitespace-nowrap">
                   <div className="text-sm font-semibold text-gray-900">{new Date(order.date).toLocaleDateString('id-ID')}</div>
                   <div className="text-xs text-gray-500 font-medium">{new Date(order.date).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}</div>
                 </td>
-                <td className="px-8 py-6 whitespace-nowrap">
+                <td className="whitespace-nowrap">
                   <div className="text-xl font-black text-transparent bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text">
                     Rp {order.total.toLocaleString('id-ID')}
                   </div>
                 </td>
-                <td className="px-8 py-6 whitespace-nowrap">
+                <td className="whitespace-nowrap">
                   <span className={`inline-flex items-center px-4 py-2 text-sm font-black rounded-full shadow-lg border-2 ${getStatusBg(order.status)}`}>
                     <div className={`w-3 h-3 rounded-full mr-3 shadow-md bg-gradient-to-r ${getStatusColor(order.status)}`}></div>
                     {order.status}
                   </span>
                 </td>
-                <td className="px-8 py-6 whitespace-nowrap">
+                <td className="whitespace-nowrap">
                   <div className="flex gap-3">
                     <select
                       value={order.status}
                       onChange={(e) => updateStatus(order.id, e.target.value)}
-                      className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white shadow-sm"
+                      className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500 bg-white shadow-sm"
                     >
                       <option value="Menunggu">Menunggu</option>
                       <option value="Diproses">Diproses</option>
@@ -141,7 +242,7 @@ export default function InvoicesPage() {
                     </select>
                     <button
                       onClick={() => setShowDetails(showDetails === order.id ? null : order.id)}
-                      className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:from-indigo-600 hover:via-purple-600 hover:to-pink-600 text-white px-4 py-2 rounded-xl text-sm font-bold transition-all duration-300 flex items-center gap-2 shadow-xl hover:shadow-2xl transform hover:-translate-y-1 hover:scale-105 border-2 border-indigo-400"
+                      className="bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white px-4 py-2 rounded-xl text-sm font-bold transition-all duration-300 flex items-center gap-2 shadow-xl hover:shadow-2xl transform hover:-translate-y-1 hover:scale-105 border-2 border-red-400"
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -161,7 +262,7 @@ export default function InvoicesPage() {
       {showDetails && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[80vh] overflow-y-auto">
-            <div className="p-6 border-b bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white rounded-t-2xl">
+            <div className="p-6 border-b bg-gradient-to-r from-red-500 to-orange-500 text-white rounded-t-2xl">
               <div className="flex justify-between items-center">
                 <h3 className="text-xl font-bold">Detail Pesanan {showDetails}</h3>
                 <button

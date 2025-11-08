@@ -189,7 +189,7 @@ export default function Dashboard() {
                     <div className="product-desc">Nasi goreng dengan telur dan ayam</div>
                   </div>
                 </td>
-                <td><span className="category-badge food">Makanan</span></td>
+                <td>Makanan</td>
                 <td className="font-bold text-blue-600 text-lg">156</td>
                 <td className="font-bold text-green-600 text-lg">Rp 2.340.000</td>
                 <td>
@@ -216,7 +216,7 @@ export default function Dashboard() {
                     <div className="product-desc">Minuman segar dari jeruk asli</div>
                   </div>
                 </td>
-                <td><span className="category-badge drink">Minuman</span></td>
+                <td>Minuman</td>
                 <td className="font-bold text-blue-600 text-lg">142</td>
                 <td className="font-bold text-green-600 text-lg">Rp 1.420.000</td>
                 <td>
@@ -243,7 +243,7 @@ export default function Dashboard() {
                     <div className="product-desc">Ayam bakar dengan saus madu</div>
                   </div>
                 </td>
-                <td><span className="category-badge food">Makanan</span></td>
+                <td>Makanan</td>
                 <td className="font-bold text-blue-600 text-lg">128</td>
                 <td className="font-bold text-green-600 text-lg">Rp 3.200.000</td>
                 <td>

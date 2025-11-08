@@ -355,7 +355,155 @@
 }
 
 .table-container {
-  overflow-x: auto;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 50%, rgba(255, 255, 255, 0.95) 100%);
+  backdrop-filter: blur(15px);
+  border-radius: 15px;
+  overflow: auto;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.1), 0 4px 10px rgba(231, 76, 60, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.table-container table {
+  width: 100%;
+}
+
+.table-container thead {
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
+  color: white;
+}
+
+.table-container th {
+  padding: 16px 20px;
+  text-align: left;
+  font-size: 14px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.table-container tbody {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(10px);
+}
+
+.table-container tr {
+  transition: all 0.3s ease;
+  transform: scale(1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.table-container tr:hover {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(139, 92, 246, 0.08) 50%, rgba(236, 72, 153, 0.08) 100%);
+  transform: scale(1.01);
+}
+
+.table-container tr:nth-child(even) {
+  background: linear-gradient(135deg, rgba(248, 250, 252, 0.3) 0%, rgba(187, 195, 222, 0.2) 100%);
+}
+
+.table-container td {
+  padding: 16px 20px;
+  text-align: left;
+}
+
+/* CSS khusus untuk tabel di halaman invoices agar lebih indah */
+.invoices-table-container {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 255, 255, 0.95) 50%, rgba(255, 255, 255, 0.98) 100%);
+  backdrop-filter: blur(20px);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 12px 35px rgba(0,0,0,0.15), 0 6px 15px rgba(231, 76, 60, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  position: relative;
+}
+
+.invoices-table-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, transparent 30%, rgba(99, 102, 241, 0.03) 50%, transparent 70%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.invoices-table-container table {
+  width: 100%;
+  position: relative;
+  z-index: 2;
+}
+
+.invoices-table-container thead {
+  background: linear-gradient(135deg, #ff6b35 0%, #f7931e 50%, #e74c3c 100%);
+  color: white;
+  position: relative;
+}
+
+.invoices-table-container thead::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+}
+
+.invoices-table-container th {
+  padding: 20px 24px;
+  text-align: left;
+  font-size: 15px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  position: relative;
+}
+
+.invoices-table-container tbody {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(15px);
+}
+
+.invoices-table-container tr {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: scale(1);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  position: relative;
+}
+
+.invoices-table-container tr:hover {
+  background: linear-gradient(135deg, rgba(255, 107, 53, 0.08) 0%, rgba(247, 147, 30, 0.08) 50%, rgba(231, 76, 60, 0.08) 100%);
+  transform: scale(1.02) translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.invoices-table-container tr:nth-child(even) {
+  background: linear-gradient(135deg, rgba(248, 250, 252, 0.4) 0%, rgba(187, 195, 222, 0.3) 100%);
+}
+
+.invoices-table-container td {
+  padding: 20px 24px;
+  text-align: left;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  position: relative;
+}
+
+.invoices-table-container td::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: linear-gradient(135deg, #ff6b35, #f7931e);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.invoices-table-container tr:hover td::before {
+  opacity: 1;
 }
 
 table {
@@ -364,21 +512,47 @@ table {
 }
 
 th, td {
-  padding: 12px 15px;
+  padding: 16px 20px;
   text-align: left;
-  border-bottom: 1px solid #ecf0f1;
+  border-bottom: 1px solid rgba(236, 240, 241, 0.5);
+  transition: all 0.3s ease;
 }
 
 th {
-  background-color: #f8f9fa;
-  color: #2c3e50;
-  font-weight: 600;
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
+  color: white;
+  font-weight: 700;
   font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
 td {
   color: #2c3e50;
   font-size: 0.9rem;
+  vertical-align: middle;
+}
+
+tbody tr {
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+tbody tr:hover {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(139, 92, 246, 0.08) 50%, rgba(236, 72, 153, 0.08) 100%);
+  transform: translateX(5px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+tbody tr:nth-child(even) {
+  background: linear-gradient(135deg, rgba(248, 250, 252, 0.3) 0%, rgba(187, 195, 222, 0.2) 100%);
+}
+
+tbody tr:nth-child(odd) {
+  background: rgba(255, 255, 255, 0.6);
 }
 
 .status {
@@ -592,6 +766,41 @@ td {
   font-weight: bold;
   font-size: 0.9rem;
   box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  transition: all 0.3s ease;
+  animation: avatarPulse 2s ease-in-out infinite;
+  position: relative;
+  overflow: hidden;
+}
+
+.avatar-circle::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+  animation: shimmer 3s ease-in-out infinite;
+}
+
+@keyframes avatarPulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%) translateY(-100%) rotate(45deg);
+  }
+  100% {
+    transform: translateX(100%) translateY(100%) rotate(45deg);
+  }
 }
 
 .customer-name {
@@ -649,6 +858,31 @@ td {
   font-weight: 600;
   display: inline-flex;
   align-items: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  border: 1px solid transparent;
+  position: relative;
+  overflow: hidden;
+}
+
+.category-badge::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s;
+}
+
+.category-badge:hover::before {
+  left: 100%;
+}
+
+.category-badge:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
 .category-badge.food {
