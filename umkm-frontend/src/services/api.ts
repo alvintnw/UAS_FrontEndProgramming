@@ -5,7 +5,6 @@ const API_BASE_URL = 'http://localhost:8000/api';
 export const api = axios.create({
   baseURL: API_BASE_URL,
   headers: {
-    'Content-Type': 'application/json',
     'Accept': 'application/json',
   },
 });
@@ -14,7 +13,7 @@ export const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     if (typeof window !== 'undefined') {
-      const token = localStorage.getItem('auth_token');
+      const token = localStorage.getItem('auth_token') || 'demo-token-123';
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
@@ -40,5 +39,27 @@ api.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
+// Fungsi untuk mendapatkan foods (untuk halaman utama)
+export const getFoods = () => api.get('/foods');
+
+// Fungsi untuk admin CRUD foods
+export const getAdminFoods = () => api.get('/admin/foods');
+export const createAdminFood = (data: FormData) => api.post('/admin/foods', data);
+export const updateAdminFood = (id: string, data: FormData | Record<string, unknown>) => {
+  // If data is FormData (file upload), use POST with _method=PUT so PHP/Laravel receives files correctly.
+  if (typeof FormData !== 'undefined' && data instanceof FormData) {
+    // append method override
+    try {
+      data.set('_method', 'PUT');
+    } catch {
+      // ignore if set fails
+    }
+    return api.post(`/admin/foods/${id}`, data);
+  }
+
+  return api.put(`/admin/foods/${id}`, data as Record<string, unknown>);
+};
+export const deleteAdminFood = (id: string) => api.delete(`/admin/foods/${id}`);
 
 export default api;

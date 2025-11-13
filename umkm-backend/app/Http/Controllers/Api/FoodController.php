@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Food;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
 
 class FoodController extends Controller
 {
@@ -17,38 +18,97 @@ class FoodController extends Controller
     {
         try {
             $query = Food::query();
-            
+
             // Filter berdasarkan kategori
             if ($request->has('category')) {
                 $query->where('category', $request->category);
             }
-            
+
             // Filter hanya yang aktif
             if ($request->has('is_active')) {
                 $query->where('is_active', filter_var($request->is_active, FILTER_VALIDATE_BOOLEAN));
             }
-            
+
             // Search berdasarkan nama
             if ($request->has('search')) {
                 $query->where('name', 'like', '%' . $request->search . '%');
             }
-            
+
             // Urutkan berdasarkan created_at terbaru
             $query->orderBy('created_at', 'desc');
-            
+
             $foods = $query->get();
-            
+
+            // hide large base64/image binary fields from listing responses to reduce payload
+            $foods->each(function($f) {
+                if (method_exists($f, 'setHidden')) {
+                    $f->setHidden(['image_data', 'image_mime_type']);
+                }
+            });
+
             return response()->json([
                 'success' => true,
                 'message' => 'Data menu berhasil diambil',
                 'data' => $foods,
                 'total' => $foods->count()
             ], 200);
-            
+
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Gagal mengambil data menu',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * GET /api/admin/foods
+     * Mengambil semua data food untuk admin (dengan auth)
+     */
+    public function adminIndex(Request $request)
+    {
+        try {
+            $query = Food::query();
+
+            // Filter berdasarkan kategori
+            if ($request->has('category')) {
+                $query->where('category', $request->category);
+            }
+
+            // Filter berdasarkan status aktif
+            if ($request->has('is_active')) {
+                $query->where('is_active', filter_var($request->is_active, FILTER_VALIDATE_BOOLEAN));
+            }
+
+            // Search berdasarkan nama
+            if ($request->has('search')) {
+                $query->where('name', 'like', '%' . $request->search . '%');
+            }
+
+            // Urutkan berdasarkan created_at terbaru
+            $query->orderBy('created_at', 'desc');
+
+            $foods = $query->get();
+
+            // hide large base64/image binary fields from admin listing responses to reduce payload
+            $foods->each(function($f) {
+                if (method_exists($f, 'setHidden')) {
+                    $f->setHidden(['image_data', 'image_mime_type']);
+                }
+            });
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Data menu admin berhasil diambil',
+                'data' => $foods,
+                'total' => $foods->count()
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mengambil data menu admin',
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -98,6 +158,7 @@ class FoodController extends Controller
                 'description' => 'nullable|string',
                 'price' => 'required|numeric|min:0',
                 'category' => 'required|string|max:100',
+                'image' => 'nullable|image|max:2048',
                 'image_url' => 'nullable|string',
                 'stock_quantity' => 'required|integer|min:0',
                 'ingredients' => 'nullable|array',
@@ -113,8 +174,18 @@ class FoodController extends Controller
                 ], 422);
             }
 
+            // Prepare data
+            $data = $request->except(['image']);
+
+            // Handle uploaded image file
+            if ($request->hasFile('image')) {
+                $path = $request->file('image')->store('foods', 'public');
+                // store relative path (so accessor will build full asset URL)
+                $data['image_url'] = $path;
+            }
+
             // Simpan data
-            $food = Food::create($request->all());
+            $food = Food::create($data);
 
             return response()->json([
                 'success' => true,
@@ -153,6 +224,7 @@ class FoodController extends Controller
                 'description' => 'nullable|string',
                 'price' => 'sometimes|required|numeric|min:0',
                 'category' => 'sometimes|required|string|max:100',
+                'image' => 'nullable|image|max:2048',
                 'image_url' => 'nullable|string',
                 'stock_quantity' => 'sometimes|required|integer|min:0',
                 'ingredients' => 'nullable|array',
@@ -168,8 +240,24 @@ class FoodController extends Controller
                 ], 422);
             }
 
-            // Update data
-            $food->update($request->all());
+            // Prepare data for update
+            $data = $request->except(['image']);
+
+            // Handle uploaded new image: store and remove old file if present
+            if ($request->hasFile('image')) {
+                $path = $request->file('image')->store('foods', 'public');
+                // delete old image file if exists
+                $oldPath = $food->getRawOriginal('image_url') ?? null;
+                if ($oldPath && Storage::disk('public')->exists($oldPath)) {
+                    Storage::disk('public')->delete($oldPath);
+                }
+                $data['image_url'] = $path;
+            }
+
+            $food->update($data);
+
+            // Refresh model to include accessors
+            $food->refresh();
 
             return response()->json([
                 'success' => true,

@@ -1,15 +1,27 @@
 // src/app/dashboard/products/page.tsx
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
+import { getAdminFoods, createAdminFood, updateAdminFood, deleteAdminFood } from '../../../services/api';
+
+interface Product {
+  _id: string;
+  name: string;
+  category: string;
+  price: number;
+  stock_quantity: number;
+  is_active: boolean;
+  image_url: string;
+  description: string;
+  image_data?: string;
+  image_mime_type?: string;
+}
+
 
 export default function ProductsPage() {
-  const [products, setProducts] = useState([
-    { id: 1, name: 'Nasi Goreng Spesial', category: 'Makanan', price: 25000, stock: 15, status: 'Tersedia', image: '/images/nasi-goreng.jpg', description: 'Nasi goreng dengan telur dan ayam' },
-    { id: 2, name: 'Ayam Bakar Madu', category: 'Makanan', price: 35000, stock: 8, status: 'Tersedia', image: '/images/ayam-bakar.jpg', description: 'Ayam bakar dengan saus madu' },
-    { id: 3, name: 'Es Jeruk Segar', category: 'Minuman', price: 12000, stock: 0, status: 'Habis', image: '/images/es-jeruk.jpg', description: 'Minuman segar dari jeruk asli' },
-    { id: 4, name: 'Mie Ayam Jamur', category: 'Makanan', price: 20000, stock: 12, status: 'Tersedia', image: '/images/mie-ayam.jpg', description: 'Mie ayam dengan jamur' },
-  ]);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const [showForm, setShowForm] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -22,77 +34,239 @@ export default function ProductsPage() {
     price: '',
     stock: '',
     description: '',
-    image: ''
+    image: null as File | null
   });
 
   const categories = ['Semua', 'Makanan', 'Minuman', 'Snack', 'Dessert'];
 
-  const filteredProducts = products.filter(product => {
-    const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         product.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === 'Semua' || product.category === selectedCategory;
-    return matchesSearch && matchesCategory;
-  });
+  // Fetch products from API
+  useEffect(() => {
+    fetchProducts();
+  }, []);
 
-  const handleAddProduct = (e: React.FormEvent) => {
+  const fetchProducts = async () => {
+    try {
+      setLoading(true);
+      const response = await getAdminFoods();
+      setProducts(response.data.data);
+      setError(null);
+    } catch (err) {
+      setError('Failed to fetch products');
+      console.error('Error fetching products:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const filteredProducts = useMemo(() => {
+    const lower = searchTerm.toLowerCase();
+    return products.filter(product => {
+      const matchesSearch = product.name.toLowerCase().includes(lower) ||
+                           product.description.toLowerCase().includes(lower);
+      const matchesCategory = selectedCategory === 'Semua' || product.category === selectedCategory;
+      return matchesSearch && matchesCategory;
+    });
+  }, [products, searchTerm, selectedCategory]);
+
+  const handleAddProduct = async (e: React.FormEvent) => {
     e.preventDefault();
-    const newProduct = {
-      id: products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 1,
-      name: formData.name,
-      category: formData.category,
-      price: parseInt(formData.price),
-      stock: parseInt(formData.stock),
-      status: parseInt(formData.stock) > 0 ? 'Tersedia' : 'Habis',
-      description: formData.description,
-      image: formData.image || '/images/default-food.jpg'
-    };
-    setProducts([...products, newProduct]);
-    setFormData({ name: '', category: 'Makanan', price: '', stock: '', description: '', image: '' });
-    setShowForm(false);
+    try {
+      const formDataToSend = new FormData();
+      formDataToSend.append('name', formData.name);
+      formDataToSend.append('description', formData.description);
+      formDataToSend.append('price', formData.price);
+      formDataToSend.append('category', formData.category);
+      formDataToSend.append('stock_quantity', formData.stock);
+      formDataToSend.append('is_active', '1');
+
+      if (formData.image) {
+        formDataToSend.append('image', formData.image);
+      }
+
+      const response = await createAdminFood(formDataToSend);
+
+      setProducts([...products, response.data.data]);
+      setFormData({ name: '', category: 'Makanan', price: '', stock: '', description: '', image: null });
+      setShowForm(false);
+    } catch (err) {
+      console.error('Error adding product:', err);
+      alert('Failed to add product');
+    }
   };
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleEditProduct = (product: any) => {
+  const handleEditProduct = useCallback((product: any) => {
     setEditingProduct(product);
     setFormData({
       name: product.name,
       category: product.category,
       price: product.price.toString(),
-      stock: product.stock.toString(),
+      stock: product.stock_quantity.toString(),
       description: product.description,
-      image: product.image
+      image: null
     });
     setShowForm(true);
+  }, []);
+
+  // Utility: normalize id from various shapes returned by backend (MongoDB _id or id)
+  const getProductId = (product: unknown): string | null => {
+    if (!product) return null;
+    const obj = product as Record<string, unknown>;
+    // id
+    if ('id' in obj && obj['id']) return String(obj['id']);
+    // _id as string
+    if ('_id' in obj && typeof obj['_id'] === 'string') return String(obj['_id']);
+    // _id as object (MongoDB with $oid)
+    if ('_id' in obj && obj['_id'] && typeof obj['_id'] === 'object') {
+      const maybeOid = (obj['_id'] as Record<string, unknown>)['$oid'];
+      if (maybeOid) return String(maybeOid);
+      return String(obj['_id']);
+    }
+    return null;
   };
 
-  const handleUpdateProduct = (e: React.FormEvent) => {
+  const handleUpdateProduct = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingProduct) return;
-    const updatedProduct = {
-      ...editingProduct,
-      name: formData.name,
-      category: formData.category,
-      price: parseInt(formData.price),
-      stock: parseInt(formData.stock),
-      status: parseInt(formData.stock) > 0 ? 'Tersedia' : 'Habis',
-      description: formData.description,
-      image: formData.image || editingProduct.image
-    };
-    setProducts(products.map(p => p.id === editingProduct.id ? updatedProduct : p));
-    setFormData({ name: '', category: 'Makanan', price: '', stock: '', description: '', image: '' });
-    setEditingProduct(null);
-    setShowForm(false);
-  };
+    const editingId = getProductId(editingProduct);
+    if (!editingId) {
+      alert('ID produk tidak valid');
+      return;
+    }
+    try {
+      const formDataToSend = new FormData();
+      formDataToSend.append('name', formData.name);
+      formDataToSend.append('description', formData.description);
+      formDataToSend.append('price', formData.price);
+      formDataToSend.append('category', formData.category);
+      formDataToSend.append('stock_quantity', formData.stock);
+      formDataToSend.append('is_active', editingProduct.is_active ? '1' : '0');
 
-  const handleDeleteProduct = (id: number) => {
-    if (confirm('Apakah Anda yakin ingin menghapus menu ini?')) {
-      setProducts(products.filter(product => product.id !== id));
+      if (formData.image) {
+        formDataToSend.append('image', formData.image);
+      }
+
+      const response = await updateAdminFood(editingId, formDataToSend);
+
+      const updated = response.data?.data ?? null;
+      // replace product in list using normalized id
+      setProducts(products.map(p => {
+        const pid = getProductId(p);
+        if (pid === editingId) return updated || {...p, ...formData};
+        return p;
+      }));
+      setFormData({ name: '', category: 'Makanan', price: '', stock: '', description: '', image: null });
+      setEditingProduct(null);
+      setShowForm(false);
+      alert('Menu berhasil diupdate!');
+    } catch (err) {
+      console.error('Error updating product:', err);
+      alert('Gagal mengupdate menu. Silakan coba lagi.');
     }
   };
 
+  const handleDeleteProduct = useCallback(async (product: unknown) => {
+    if (!confirm('Apakah Anda yakin ingin menghapus menu ini?')) return;
+
+    try {
+      const normalizedId = getProductId(product);
+      if (!normalizedId) {
+        alert('ID produk tidak valid');
+        return;
+      }
+
+      await deleteAdminFood(normalizedId);
+      // update state immutably
+      setProducts(prev => prev.filter(p => getProductId(p) !== normalizedId));
+      alert('Menu berhasil dihapus!');
+    } catch (err) {
+      console.error('Error deleting product:', err);
+      alert('Gagal menghapus menu. Silakan coba lagi.');
+    }
+  }, []);
+
+  // Prefer the stored public URL (smaller), fallback to base64 data only if URL missing
+  const getProductImage = (product: Product) => {
+    if (product.image_url) return product.image_url;
+    if (product.image_data && product.image_mime_type) {
+      return `data:${product.image_mime_type};base64,${product.image_data}`;
+    }
+    return '/images/default-food.jpg';
+  };
+
+  // Small memoized row to avoid re-rendering whole table on unrelated state changes
+  const ProductRow = ({ product }: { product: Product }) => {
+    const status = product.is_active && product.stock_quantity > 0 ? 'Tersedia' : 'Habis';
+    const pid = String(getProductId(product) ?? '');
+    return (
+      <tr key={pid}>
+        <td className="flex items-center gap-3">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={getProductImage(product)}
+            alt={product.name}
+            width={48}
+            height={48}
+            loading="lazy"
+            decoding="async"
+            className="w-12 h-12 rounded-md object-cover"
+          />
+          <div className="product-id">#{pid?.slice(-3)}</div>
+          <div className="font-bold text-gray-900">{product.name}</div>
+        </td>
+        <td>
+          <span className={`category-badge ${product.category.toLowerCase()}`}>
+            <span className="badge-dot"></span>
+            {product.category}
+          </span>
+        </td>
+        <td>
+          <div className="price-text">Rp {product.price.toLocaleString('id-ID')}</div>
+          <div className="price-label">per porsi</div>
+        </td>
+        <td>
+          <div className="flex items-center gap-2">
+            <div className={`stock-circle ${product.stock_quantity > 10 ? 'high' : product.stock_quantity > 5 ? 'medium' : 'low'}`}>
+              {product.stock_quantity}
+            </div>
+            <div className="stock-label">unit</div>
+          </div>
+        </td>
+        <td>
+          <span className={`status-badge ${status === 'Tersedia' ? 'available' : 'unavailable'}`}>
+            <div className={`status-dot ${status === 'Tersedia' ? 'available' : 'unavailable'}`}></div>
+            {status}
+          </span>
+        </td>
+        <td>
+          <div className="action-buttons">
+            <button
+              onClick={() => handleEditProduct(product)}
+              className="edit-button"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+              </svg>
+              Edit
+            </button>
+            <button
+              onClick={() => handleDeleteProduct(product)}
+              className="delete-button"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+              Hapus
+            </button>
+          </div>
+        </td>
+      </tr>
+    );
+  };
+
   const totalProducts = products.length;
-  const availableProducts = products.filter(p => p.status === 'Tersedia').length;
-  const outOfStockProducts = products.filter(p => p.status === 'Habis').length;
+  const availableProducts = products.filter(p => p.is_active && p.stock_quantity > 0).length;
+  const outOfStockProducts = products.filter(p => p.stock_quantity === 0).length;
 
   return (
     <div className="p-6">
@@ -183,6 +357,14 @@ export default function ProductsPage() {
         </div>
       </div>
 
+      {loading && (
+        <div className="text-center py-4 text-gray-600">Memuat data menu...</div>
+      )}
+
+      {error && (
+        <div className="text-center py-2 text-red-500">{error}</div>
+      )}
+
       {/* Search and Filter Section */}
       <div className="products-search">
         <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
@@ -218,7 +400,7 @@ export default function ProductsPage() {
               className="add-button"
               onClick={() => {
                 setEditingProduct(null);
-                setFormData({ name: '', category: 'Makanan', price: '', stock: '', description: '', image: '' });
+                setFormData({ name: '', category: 'Makanan', price: '', stock: '', description: '', image: null });
                 setShowForm(true);
               }}
             >
@@ -299,14 +481,14 @@ export default function ProductsPage() {
                   />
                 </div>
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-bold text-gray-700 mb-3">URL Gambar</label>
+                  <label className="block text-sm font-bold text-gray-700 mb-3">Upload Gambar</label>
                   <input
-                    type="url"
-                    value={formData.image}
-                    onChange={(e) => setFormData({...formData, image: e.target.value})}
-                    className="w-full px-5 py-4 border-2 border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-gray-50 transition-all duration-300 text-base"
-                    placeholder="https://example.com/image.jpg"
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => setFormData({...formData, image: e.target.files?.[0] || null})}
+                    className="w-full px-5 py-4 border-2 border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-gray-50 transition-all duration-300 text-base file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100"
                   />
+                  <p className="text-sm text-gray-500 mt-2">Format: JPG, PNG, GIF. Maksimal 2MB</p>
                 </div>
               </div>
               <div className="flex gap-4 justify-end pt-4 border-t border-gray-200">
@@ -315,7 +497,7 @@ export default function ProductsPage() {
                   onClick={() => {
                     setShowForm(false);
                     setEditingProduct(null);
-                    setFormData({ name: '', category: 'Makanan', price: '', stock: '', description: '', image: '' });
+                    setFormData({ name: '', category: 'Makanan', price: '', stock: '', description: '', image: null });
                   }}
                   className="px-8 py-4 text-gray-600 border-2 border-gray-300 rounded-2xl hover:bg-gray-50 transition-all duration-300 font-bold text-base"
                 >
@@ -347,60 +529,7 @@ export default function ProductsPage() {
           </thead>
           <tbody>
             {filteredProducts.map((product) => (
-              <tr key={product.id}>
-                <td className="flex items-center gap-3">
-                  <div className="product-id">#{product.id.toString().padStart(3, '0')}</div>
-                  <div className="font-bold text-gray-900">{product.name}</div>
-                </td>
-                <td>
-                  <span className={`category-badge ${product.category.toLowerCase()}`}>
-                    <span className="badge-dot"></span>
-                    {product.category}
-                  </span>
-                </td>
-                <td>
-                  <div className="price-text">
-                    Rp {product.price.toLocaleString('id-ID')}
-                  </div>
-                  <div className="price-label">per porsi</div>
-                </td>
-                <td>
-                  <div className="flex items-center gap-2">
-                    <div className={`stock-circle ${product.stock > 10 ? 'high' : product.stock > 5 ? 'medium' : 'low'}`}>
-                      {product.stock}
-                    </div>
-                    <div className="stock-label">unit</div>
-                  </div>
-                </td>
-                <td>
-                  <span className={`status-badge ${product.status === 'Tersedia' ? 'available' : 'unavailable'}`}>
-                    <div className={`status-dot ${product.status === 'Tersedia' ? 'available' : 'unavailable'}`}></div>
-                    {product.status}
-                  </span>
-                </td>
-                <td>
-                  <div className="action-buttons">
-                    <button
-                      onClick={() => handleEditProduct(product)}
-                      className="edit-button"
-                    >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                      </svg>
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDeleteProduct(product.id)}
-                      className="delete-button"
-                    >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                      </svg>
-                      Hapus
-                    </button>
-                  </div>
-                </td>
-              </tr>
+              <ProductRow key={String(getProductId(product) ?? '')} product={product} />
             ))}
           </tbody>
         </table>

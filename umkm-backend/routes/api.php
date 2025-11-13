@@ -34,9 +34,6 @@ Route::get('/', function () {
 // Foods API Routes (index/show tersedia publik; create/update/delete tersedia di /api/admin/foods)
 Route::get('/foods', [FoodController::class, 'index']);
 Route::get('/foods/{id}', [FoodController::class, 'show']);
-Route::post('/foods', [FoodController::class, 'store']);
-Route::put('/foods/{id}', [FoodController::class, 'update']);
-Route::delete('/foods/{id}', [FoodController::class, 'destroy']);
 
 // Developers
 Route::resource('developers', DeveloperController::class)->only(['index', 'show']);
@@ -82,13 +79,17 @@ Route::post('/login', [AuthController::class, 'login']);
 // ------------------------------------------------------------------------
 // ## Rute Terproteksi (Authenticated)
 // ------------------------------------------------------------------------
+// Admin product routes are protected. We allow either a real authenticated
+// admin user (Sanctum) or a demo token (Bearer demo-token-*) via the
+// EnsureAdminOrDemo middleware implemented in app/Http/Middleware.
+
 Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
-    
+
     // Dashboard (Biarkan seperti ini)
     Route::get('/dashboard/stats', function () {
         return response()->json([
@@ -98,31 +99,25 @@ Route::middleware(['auth:sanctum'])->group(function () {
             'recent_orders' => []
         ]);
     });
-    
+
     // Invoices (Ganti dengan Resource yang lebih bersih)
     // Mencakup GET, POST, PUT, DELETE
     Route::resource('invoices', InvoiceController::class)->except(['create', 'edit']);
-    
-    // ------------------------------------------------------------------------
-    // Rute Admin/Manajer (CRUD: CREATE, UPDATE, DELETE)
-    // ------------------------------------------------------------------------
-    Route::middleware('admin')->prefix('admin')->group(function () {
-        
-        // 1. ✅ CRUD FOOD (POST, PUT, DELETE)
-        // Kita gunakan resource karena lebih bersih, tapi kita kecualikan (except) index dan show 
-        // karena itu sudah ada di rute public di atas.
-        Route::resource('foods', FoodController::class)->except(['index', 'show', 'create', 'edit']); 
-        
-        /* Rute yang dihasilkan:
-        - POST    /api/admin/foods
-        - PUT/PATCH /api/admin/foods/{food}
-        - DELETE  /api/admin/foods/{food}
-        */
+});
 
-        // 2. CRUD Products (POST, PUT, DELETE) - Gunakan Resource jika ProductController Anda adalah Resource Controller
-        // Jika tidak, rute manual Anda sebelumnya sudah benar, tapi Resource lebih disarankan:
-        Route::post('/products', [ProductController::class, 'store']);
-        Route::put('/products/{id}', [ProductController::class, 'update']);
-        Route::delete('/products/{id}', [ProductController::class, 'destroy']);
-    });
+// ------------------------------------------------------------------------
+// Rute Admin/Manajer (CRUD: CREATE, UPDATE, DELETE)
+// Melakukan proteksi dengan EnsureAdminOrDemo middleware (mendukung demo token)
+// Ini diletakkan di luar auth:sanctum group agar demo-token tidak ditangani oleh Sanctum
+// yang pada setup ini tidak menggunakan relational personal access tokens.
+Route::middleware([\App\Http\Middleware\EnsureAdminOrDemo::class])->prefix('admin')->group(function () {
+
+    // CRUD FOOD (POST, PUT, DELETE) - Menggunakan FoodController untuk admin
+    Route::get('foods', [FoodController::class, 'adminIndex']);
+    Route::post('foods', [FoodController::class, 'store']);
+    Route::put('foods/{id}', [FoodController::class, 'update']);
+    Route::delete('foods/{id}', [FoodController::class, 'destroy']);
+
+    // CRUD Products (POST, PUT, DELETE) - Tetap ada untuk backward compatibility
+    Route::resource('products', ProductController::class)->except(['create', 'edit']);
 });

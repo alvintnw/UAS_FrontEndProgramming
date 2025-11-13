@@ -19,6 +19,8 @@ class Product extends Eloquent
         'price',
         'category',
         'image_url',
+        'image_data',
+        'image_mime_type',
         'is_active',
         'stock_quantity',
         'ingredients',
@@ -50,5 +52,13 @@ class Product extends Eloquent
     public function getIsInStockAttribute()
     {
         return $this->stock_quantity > 0;
+    }
+
+    public function getImageAttribute()
+    {
+        if ($this->image_data && $this->image_mime_type) {
+            return 'data:' . $this->image_mime_type . ';base64,' . $this->image_data;
+        }
+        return $this->image_url ?? '/images/default-food.jpg';
     }
 }

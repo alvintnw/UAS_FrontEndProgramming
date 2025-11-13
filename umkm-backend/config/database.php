@@ -33,11 +33,12 @@ return [
 
     'mongodb' => [
         'driver' => 'mongodb',
-        'host' => env('DB_HOST', '127.0.0.1'),
-        'port' => env('DB_PORT', 27017),
+        'dsn' => env('DB_DSN', 'mongodb+srv://Aldi:Aldi12345@cluster0.yezc2.mongodb.net/?retryWrites=true&w=majority&tls=true&tlsAllowInvalidCertificates=true'),
         'database' => env('DB_DATABASE', 'umkm_backend'),
-        'username' => env('DB_USERNAME', ''),
-        'password' => env('DB_PASSWORD', ''),
+        // 'host' => env('DB_HOST', '127.0.0.1'),
+        // 'port' => env('DB_PORT', 27017),
+        // 'username' => env('DB_USERNAME', ''),
+        // 'password' => env('DB_PASSWORD', ''),
         'options' => [
             'retryWrites' => true,
             'appname' => 'Laravel',
