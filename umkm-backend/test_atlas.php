@@ -2,10 +2,10 @@
 require 'vendor/autoload.php';
 
 try {
-    $uri = "mongodb+srv://Aldi:Aldi12345@cluster0.yezc2.mongodb.net/?retryWrites=true&w=majority&tls=true&tlsAllowInvalidCertificates=true";
+    $uri = "mongodb+srv://Aldi:Aldi12345@cluster0.yezc2.mongodb.net/?appName=Cluster0";
     $client = new MongoDB\Client($uri);
 
-    $collection = $client->testdb->users;
+    $collection = $client->umkm_backend->users;
 
     $result = $collection->insertOne([
         'name' => 'Aldi',

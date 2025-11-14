@@ -61,4 +61,9 @@ class Product extends Eloquent
         }
         return $this->image_url ?? '/images/default-food.jpg';
     }
+
+    public function setStockQuantityAttribute($value)
+    {
+        $this->attributes['stock_quantity'] = (int) $value;
+    }
 }

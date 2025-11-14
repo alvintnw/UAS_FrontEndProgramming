@@ -85,7 +85,7 @@ class ProductController extends Controller
                 'image_url' => $imageUrl,
                 'image_data' => $imageData,
                 'image_mime_type' => $mime,
-                'stock_quantity' => (int)$request->input('stock_quantity', 0),
+                'stock_quantity' => $request->input('stock_quantity', 0),
                 'is_active' => filter_var($request->input('is_active', true), FILTER_VALIDATE_BOOLEAN)
             ];
 
@@ -140,7 +140,7 @@ class ProductController extends Controller
                 $updateData['price'] = (float)$updateData['price'];
             }
             if (array_key_exists('stock_quantity', $updateData)) {
-                $updateData['stock_quantity'] = (int)$updateData['stock_quantity'];
+                $updateData['stock_quantity'] = $updateData['stock_quantity'];
             }
             if (array_key_exists('is_active', $updateData)) {
                 $updateData['is_active'] = filter_var($updateData['is_active'], FILTER_VALIDATE_BOOLEAN);

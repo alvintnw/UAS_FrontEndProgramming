@@ -100,9 +100,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         ]);
     });
 
-    // Invoices (Ganti dengan Resource yang lebih bersih)
-    // Mencakup GET, POST, PUT, DELETE
-    Route::resource('invoices', InvoiceController::class)->except(['create', 'edit']);
+    // Invoices moved to admin group below
 });
 
 // ------------------------------------------------------------------------
@@ -120,4 +118,8 @@ Route::middleware([\App\Http\Middleware\EnsureAdminOrDemo::class])->prefix('admi
 
     // CRUD Products (POST, PUT, DELETE) - Tetap ada untuk backward compatibility
     Route::resource('products', ProductController::class)->except(['create', 'edit']);
+
+    // Invoices (Ganti dengan Resource yang lebih bersih)
+    // Mencakup GET, POST, PUT, DELETE
+    Route::resource('invoices', InvoiceController::class)->except(['create', 'edit']);
 });

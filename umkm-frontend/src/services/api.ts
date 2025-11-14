@@ -62,4 +62,19 @@ export const updateAdminFood = (id: string, data: FormData | Record<string, unkn
 };
 export const deleteAdminFood = (id: string) => api.delete(`/admin/foods/${id}`);
 
+// Fungsi untuk orders/invoices
+export const getInvoices = () => api.get('/admin/invoices');
+export const getInvoice = (id: string) => api.get(`/admin/invoices/${id}`);
+export const createOrder = (data: {
+  customer_name: string;
+  customer_phone: string;
+  items: Array<{
+    food_id: string;
+    quantity: number;
+    price: number;
+  }>;
+}) => api.post('/admin/invoices', data);
+export const updateInvoice = (id: string, data: Record<string, unknown>) => api.put(`/admin/invoices/${id}`, data);
+export const deleteInvoice = (id: string) => api.delete(`/admin/invoices/${id}`);
+
 export default api;

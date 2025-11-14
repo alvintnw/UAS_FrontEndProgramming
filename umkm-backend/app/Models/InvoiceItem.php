@@ -2,17 +2,17 @@
 
 namespace App\Models;
 
-use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
+use MongoDB\Laravel\Eloquent\Model;
 
-class InvoiceItem extends Eloquent
+class InvoiceItem extends Model
 {
     protected $connection = 'mongodb';
     protected $collection = 'invoice_items';
 
     protected $fillable = [
         'invoice_id',
-        'product_id',
-        'product_name',
+        'food_id',
+        'food_name',
         'quantity',
         'price',
         'subtotal',
@@ -34,11 +34,11 @@ class InvoiceItem extends Eloquent
     }
 
     /**
-     * Get the product that owns the item.
+     * Get the food that owns the item.
      */
-    public function product()
+    public function food()
     {
-        return $this->belongsTo(Product::class);
+        return $this->belongsTo(Food::class, 'food_id', '_id');
     }
 
     /**

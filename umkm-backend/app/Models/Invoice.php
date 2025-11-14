@@ -2,14 +2,14 @@
 
 namespace App\Models;
 
-use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
+use MongoDB\Laravel\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Invoice extends Eloquent
+class Invoice extends Model
 {
     use HasFactory;
 
-    protected $connection = 'mongodb';
+    protected $connection = 'mongodb_local';
     protected $collection = 'invoices';
 
     protected $fillable = [
@@ -50,7 +50,7 @@ class Invoice extends Eloquent
      */
     public function items()
     {
-        return $this->hasMany(InvoiceItem::class);
+        return $this->hasMany(InvoiceItem::class, 'invoice_id', '_id');
     }
 
     /**

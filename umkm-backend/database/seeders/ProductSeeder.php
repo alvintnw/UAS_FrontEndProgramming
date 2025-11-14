@@ -80,6 +80,9 @@ class ProductSeeder extends Seeder
         ];
 
         foreach ($products as $product) {
+            // Ensure stock_quantity is integer
+            $product['stock_quantity'] = (int) $product['stock_quantity'];
+
             // If an image file exists in storage, convert to base64 and store inline
             if (!empty($product['image_url'])) {
                 // normalize path: remove leading slash

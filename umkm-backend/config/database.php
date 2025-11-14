@@ -16,7 +16,7 @@ return [
     |
     */
 
-    'default' => env('DB_CONNECTION', 'mongodb'),
+    'default' => env('DB_CONNECTION', 'mongodb_local'),
 
     /*
     |--------------------------------------------------------------------------
@@ -33,14 +33,25 @@ return [
 
     'mongodb' => [
         'driver' => 'mongodb',
-        'dsn' => env('DB_DSN', 'mongodb+srv://Aldi:Aldi12345@cluster0.yezc2.mongodb.net/?retryWrites=true&w=majority&tls=true&tlsAllowInvalidCertificates=true'),
+        'dsn' => env('DB_DSN', 'mongodb+srv://Aldi:Aldi12345@cluster0.yezc2.mongodb.net/umkm_backend?retryWrites=true&w=majority&tls=true&tlsAllowInvalidCertificates=true'),
         'database' => env('DB_DATABASE', 'umkm_backend'),
-        // 'host' => env('DB_HOST', '127.0.0.1'),
-        // 'port' => env('DB_PORT', 27017),
-        // 'username' => env('DB_USERNAME', ''),
-        // 'password' => env('DB_PASSWORD', ''),
         'options' => [
             'retryWrites' => true,
+            'appname' => 'Laravel',
+            'driver' => [
+                'name' => 'mongodb',
+            ],
+        ],
+    ],
+
+    'mongodb_local' => [
+        'driver' => 'mongodb',
+        'host' => env('DB_HOST', '127.0.0.1'),
+        'port' => env('DB_PORT', 27017),
+        'database' => env('DB_DATABASE', 'umkm_backend'),
+        'username' => env('DB_USERNAME', ''),
+        'password' => env('DB_PASSWORD', ''),
+        'options' => [
             'appname' => 'Laravel',
             'driver' => [
                 'name' => 'mongodb',

@@ -176,6 +176,10 @@ class FoodController extends Controller
 
             // Prepare data
             $data = $request->except(['image']);
+            // Ensure stock_quantity is integer
+            if (isset($data['stock_quantity'])) {
+                $data['stock_quantity'] = (int) $data['stock_quantity'];
+            }
 
             // Handle uploaded image file
             if ($request->hasFile('image')) {
@@ -242,6 +246,10 @@ class FoodController extends Controller
 
             // Prepare data for update
             $data = $request->except(['image']);
+            // Ensure stock_quantity is integer
+            if (isset($data['stock_quantity'])) {
+                $data['stock_quantity'] = (int) $data['stock_quantity'];
+            }
 
             // Handle uploaded new image: store and remove old file if present
             if ($request->hasFile('image')) {

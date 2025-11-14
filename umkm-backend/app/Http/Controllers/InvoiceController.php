@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Invoice;
 use App\Models\Sale;
+use App\Models\Food;
+use App\Models\InvoiceItem;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
@@ -13,7 +15,7 @@ class InvoiceController extends Controller
     public function index(): JsonResponse
     {
         $invoices = Invoice::with('items')->orderBy('created_at', 'desc')->get();
-        
+
         return response()->json([
             'success' => true,
             'data' => $invoices
@@ -23,7 +25,7 @@ class InvoiceController extends Controller
     public function show($id): JsonResponse
     {
         $invoice = Invoice::with('items')->find($id);
-        
+
         if (!$invoice) {
             return response()->json([
                 'success' => false,
@@ -43,7 +45,7 @@ class InvoiceController extends Controller
             'customer_name' => 'required|string|max:255',
             'customer_phone' => 'required|string|max:20',
             'items' => 'required|array|min:1',
-            'items.*.product_id' => 'required|exists:products,id',
+            'items.*.food_id' => 'required|string',
             'items.*.quantity' => 'required|integer|min:1',
             'items.*.price' => 'required|numeric|min:0'
         ]);
@@ -51,6 +53,19 @@ class InvoiceController extends Controller
         DB::beginTransaction();
 
         try {
+            // Check stock availability and lock foods
+            $foodIds = collect($validated['items'])->pluck('food_id')->unique();
+            $foods = Food::whereIn('_id', $foodIds)->get()->keyBy('_id');
+
+            foreach ($validated['items'] as $item) {
+                $food = $foods[$item['food_id']];
+                $requestedQuantity = $item['quantity'];
+
+                if ($food->stock_quantity < $requestedQuantity) {
+                    throw new \Exception("Insufficient stock for {$food->name}. Available: {$food->stock_quantity}, Requested: {$requestedQuantity}");
+                }
+            }
+
             // Calculate total
             $total = 0;
             foreach ($validated['items'] as $item) {
@@ -59,16 +74,28 @@ class InvoiceController extends Controller
 
             // Create invoice
             $invoice = Invoice::create([
-                'invoice_number' => 'INV-' . date('Ymd') . '-' . rand(1000, 9999),
+                'invoice_number' => 'ORD-' . date('Ymd') . '-' . rand(1000, 9999),
                 'customer_name' => $validated['customer_name'],
                 'customer_phone' => $validated['customer_phone'],
                 'total_amount' => $total,
-                'status' => 'pending'
+                'status' => 'Menunggu'
             ]);
 
-            // Add invoice items
+            // Add invoice items and reduce stock
             foreach ($validated['items'] as $item) {
-                $invoice->items()->create($item);
+                $food = $foods[$item['food_id']];
+
+                InvoiceItem::create([
+                    'invoice_id' => $invoice->_id,
+                    'food_id' => $item['food_id'],
+                    'food_name' => $food->name,
+                    'quantity' => $item['quantity'],
+                    'price' => $item['price'],
+                    'subtotal' => $item['quantity'] * $item['price']
+                ]);
+
+                // Reduce stock
+                $food->decrement('stock_quantity', $item['quantity']);
             }
 
             // Update sales total
@@ -78,7 +105,7 @@ class InvoiceController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Invoice created successfully',
+                'message' => 'Order created successfully',
                 'data' => $invoice->load('items')
             ], 201);
 
@@ -86,7 +113,7 @@ class InvoiceController extends Controller
             DB::rollBack();
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to create invoice: ' . $e->getMessage()
+                'message' => 'Failed to create order: ' . $e->getMessage()
             ], 500);
         }
     }
@@ -105,7 +132,7 @@ class InvoiceController extends Controller
         $validated = $request->validate([
             'customer_name' => 'sometimes|string|max:255',
             'customer_phone' => 'sometimes|string|max:20',
-            'status' => 'sometimes|in:pending,paid,cancelled',
+            'status' => 'sometimes|in:Menunggu,Diproses,Selesai',
             'items' => 'sometimes|array|min:1'
         ]);
 
@@ -125,9 +152,9 @@ class InvoiceController extends Controller
                 $this->updateSalesTotal($difference);
 
                 // Update items
-                $invoice->items()->delete();
+                InvoiceItem::where('invoice_id', $invoice->_id)->delete();
                 foreach ($validated['items'] as $item) {
-                    $invoice->items()->create($item);
+                    InvoiceItem::create(array_merge($item, ['invoice_id' => $invoice->_id]));
                 }
             }
 

@@ -173,6 +173,8 @@ class FoodSeeder extends Seeder
         ];
 
         foreach ($foods as $food) {
+            // Ensure stock_quantity is integer
+            $food['stock_quantity'] = (int) $food['stock_quantity'];
             Food::create($food);
         }
 

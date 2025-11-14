@@ -63,4 +63,9 @@ class Food extends Model
     {
         return $query->where('category', $category);
     }
+
+    public function setStockQuantityAttribute($value)
+    {
+        $this->attributes['stock_quantity'] = (int) $value;
+    }
 }
