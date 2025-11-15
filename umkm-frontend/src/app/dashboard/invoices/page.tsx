@@ -356,7 +356,7 @@ export default function InvoicesPage() {
           </thead>
           <tbody className="bg-white/60 backdrop-blur-md">
             {filteredOrders.map((order, index) => (
-              <tr key={order._id} className={`hover:bg-gradient-to-r hover:from-red-50/80 hover:via-orange-50/80 hover:to-yellow-50/80 transition-all duration-300 transform hover:scale-[1.01] hover:shadow-lg ${index % 2 === 0 ? 'bg-white/40' : 'bg-gradient-to-r from-gray-50/30 to-orange-50/20'}`}>
+              <tr key={order._id || `order-${index}`} className={`hover:bg-gradient-to-r hover:from-red-50/80 hover:via-orange-50/80 hover:to-yellow-50/80 transition-all duration-300 transform hover:scale-[1.01] hover:shadow-lg ${index % 2 === 0 ? 'bg-white/40' : 'bg-gradient-to-r from-gray-50/30 to-orange-50/20'}`}>
                 <td className="whitespace-nowrap">
                   <div className="font-mono text-red-600 font-bold text-lg">{order.invoice_number}</div>
                   <div className="text-xs text-gray-500 font-medium">ID: {order._id}</div>

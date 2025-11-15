@@ -84,4 +84,26 @@ class Sale extends Model
         // For now, return a placeholder
         return 12.5; // Example growth percentage
     }
+
+    /**
+     * Get monthly sales data for charts
+     */
+    public static function getMonthlySalesData()
+    {
+        // This is a placeholder - in a real application, you would query historical data
+        // For now, return sample data for the last 7 days
+        $data = [];
+        $baseDate = now()->subDays(6);
+
+        for ($i = 0; $i < 7; $i++) {
+            $date = $baseDate->copy()->addDays($i);
+            $data[] = [
+                'date' => $date->format('Y-m-d'),
+                'sales' => rand(50000, 200000), // Random sales between 50k-200k
+                'orders' => rand(5, 20) // Random orders between 5-20
+            ];
+        }
+
+        return $data;
+    }
 }

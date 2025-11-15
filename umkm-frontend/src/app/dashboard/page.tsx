@@ -3,14 +3,61 @@
 
 import { useEffect, useState } from 'react';
 import { getDashboardStats } from '@/services/api';
+import './dashboard.css';
+
+interface Food {
+  id: string;
+  name: string;
+  price: number;
+  stock_quantity: number;
+  image_url?: string;
+  is_active?: boolean;
+}
+
+interface OrderItem {
+  food_id: string;
+  food_name: string;
+  quantity: number;
+  price: number;
+  subtotal: number;
+}
+
+interface Order {
+  _id: string;
+  invoice_number: string;
+  customer_name: string;
+  customer_phone: string;
+  total_amount: number;
+  status: string;
+  created_at: string;
+  items: OrderItem[];
+}
+
+interface Product {
+  _id: string;
+  name: string;
+  category: string;
+  price: number;
+  stock_quantity: number;
+  is_active: boolean;
+  image_url: string;
+  description: string;
+  image_data?: string;
+  image_mime_type?: string;
+}
 
 interface DashboardStats {
   total_sales: number;
+  monthly_sales: number;
+  daily_sales: number;
   total_orders: number;
   total_products: number;
   pending_orders: number;
   processing_orders: number;
   completed_orders: number;
+  average_order_value: number;
+  profit_margin: number;
+  sales_growth: number;
   recent_orders: Array<{
     id: string;
     invoice_number: string;
@@ -25,18 +72,28 @@ interface DashboardStats {
     sold: number;
     revenue: number;
   }>;
+  monthly_sales_data: Array<{
+    month: string;
+    sales: number;
+  }>;
 }
 
 export default function Dashboard() {
   const [stats, setStats] = useState<DashboardStats>({
     total_sales: 0,
+    monthly_sales: 0,
+    daily_sales: 0,
     total_orders: 0,
     total_products: 0,
     pending_orders: 0,
     processing_orders: 0,
     completed_orders: 0,
+    average_order_value: 0,
+    profit_margin: 0,
+    sales_growth: 0,
     recent_orders: [],
-    popular_products: []
+    popular_products: [],
+    monthly_sales_data: []
   });
   const [loading, setLoading] = useState(true);
 
@@ -146,7 +203,7 @@ export default function Dashboard() {
           </div>
           <div className="card-value">{stats.total_orders.toLocaleString('id-ID')}</div>
           <div className="card-change positive">
-            <i className="fas fa-arrow-up"></i> Data real-time
+            <i className="fas fa-arrow-up"></i> Rata-rata {formatCurrency(stats.average_order_value)}
           </div>
         </div>
 
@@ -159,7 +216,7 @@ export default function Dashboard() {
           </div>
           <div className="card-value">{formatCurrency(stats.total_sales)}</div>
           <div className="card-change positive">
-            <i className="fas fa-arrow-up"></i> Dari pesanan selesai
+            <i className="fas fa-arrow-up"></i> {stats.sales_growth}% pertumbuhan
           </div>
         </div>
 
@@ -167,12 +224,12 @@ export default function Dashboard() {
           <div className="card-header">
             <h3 className="card-title">Pesanan Aktif</h3>
             <div className="card-icon customers">
-              <i className="fas fa-users"></i>
+              <i className="fas fa-clock"></i>
             </div>
           </div>
-          <div className="card-value">{stats.recent_orders.length}</div>
+          <div className="card-value">{stats.pending_orders}</div>
           <div className="card-change positive">
-            <i className="fas fa-arrow-up"></i> Pesanan terbaru
+            <i className="fas fa-arrow-up"></i> Pesanan menunggu
           </div>
         </div>
 
@@ -190,60 +247,49 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Charts and Recent Orders */}
-      <div className="dashboard-row">
-        <div className="chart-container">
-          <h3 className="section-title">Statistik Penjualan 7 Hari Terakhir</h3>
-          <div className="chart-placeholder">
-            <div className="chart-icon">📊</div>
-            <p>Grafik penjualan akan ditampilkan di sini</p>
-            <small className="chart-note">Data real-time tersedia</small>
-          </div>
-        </div>
-
-        <div className="recent-orders">
-          <h3 className="section-title">Pesanan Terbaru</h3>
-          <div className="table-container">
-            <table>
-              <thead>
+      {/* Recent Orders */}
+      <div className="recent-orders">
+        <h3 className="section-title">Pesanan Terbaru</h3>
+        <div className="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>ID Pesanan</th>
+                <th>Pelanggan</th>
+                <th>Total</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {stats.recent_orders.length > 0 ? (
+                stats.recent_orders.map((order) => {
+                  const statusBadge = getStatusBadge(order.status);
+                  return (
+                    <tr key={order.id}>
+                      <td className="font-mono text-blue-600">#{order.invoice_number}</td>
+                      <td className="flex items-center gap-3">
+                        <div className="avatar-circle bg-gradient-to-r from-blue-500 to-purple-500">
+                          {getInitials(order.customer_name)}
+                        </div>
+                        <div>
+                          <div className="customer-name">{order.customer_name}</div>
+                          <div className="customer-time">{formatDate(order.created_at)}</div>
+                        </div>
+                      </td>
+                      <td className="font-bold text-green-600 text-lg">{formatCurrency(order.total)}</td>
+                      <td><span className={statusBadge.class}>{statusBadge.text}</span></td>
+                    </tr>
+                  );
+                })
+              ) : (
                 <tr>
-                  <th>ID Pesanan</th>
-                  <th>Pelanggan</th>
-                  <th>Total</th>
-                  <th>Status</th>
+                  <td colSpan={4} className="text-center py-4 text-muted">
+                    Belum ada pesanan
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {stats.recent_orders.length > 0 ? (
-                  stats.recent_orders.map((order) => {
-                    const statusBadge = getStatusBadge(order.status);
-                    return (
-                      <tr key={order.id}>
-                        <td className="font-mono text-blue-600">#{order.invoice_number}</td>
-                        <td className="flex items-center gap-3">
-                          <div className="avatar-circle bg-gradient-to-r from-blue-500 to-purple-500">
-                            {getInitials(order.customer_name)}
-                          </div>
-                          <div>
-                            <div className="customer-name">{order.customer_name}</div>
-                            <div className="customer-time">{formatDate(order.created_at)}</div>
-                          </div>
-                        </td>
-                        <td className="font-bold text-green-600 text-lg">{formatCurrency(order.total)}</td>
-                        <td><span className={statusBadge.class}>{statusBadge.text}</span></td>
-                      </tr>
-                    );
-                  })
-                ) : (
-                  <tr>
-                    <td colSpan={4} className="text-center py-4 text-muted">
-                      Belum ada pesanan
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
 

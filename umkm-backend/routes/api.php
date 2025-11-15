@@ -94,76 +94,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         return $request->user();
     });
 
-    // Dashboard Stats - Real data from models
-    Route::get('/dashboard/stats', function () {
-        try {
-            // Get total sales from Sale model (more accurate)
-            $saleRecord = \App\Models\Sale::first();
-            $totalSales = $saleRecord ? $saleRecord->total_sales : 0;
-
-            // Get total orders (count of all invoices)
-            $totalOrders = \App\Models\Invoice::count();
-
-            // Get total products (count of active foods)
-            $totalProducts = \App\Models\Food::where('is_active', true)->count();
-
-            // Get pending orders count
-            $pendingOrders = \App\Models\Invoice::where('status', 'Menunggu')->count();
-
-            // Get processing orders count
-            $processingOrders = \App\Models\Invoice::where('status', 'Diproses')->count();
-
-            // Get completed orders count
-            $completedOrders = \App\Models\Invoice::where('status', 'Selesai')->count();
-
-            // Get recent orders (last 5 invoices)
-            $recentOrders = \App\Models\Invoice::with('items')
-                ->orderBy('created_at', 'desc')
-                ->take(5)
-                ->get()
-                ->map(function ($invoice) {
-                    return [
-                        'id' => $invoice->_id,
-                        'invoice_number' => $invoice->invoice_number,
-                        'customer_name' => $invoice->customer_name,
-                        'total' => $invoice->total_amount,
-                        'status' => $invoice->status,
-                        'created_at' => $invoice->created_at,
-                        'items_count' => $invoice->items->count()
-                    ];
-                });
-
-            // Get popular products (top 3 by sales from invoice items)
-            $popularProducts = \App\Models\InvoiceItem::selectRaw('food_name, SUM(quantity) as total_sold, SUM(subtotal) as total_revenue')
-                ->groupBy('food_name')
-                ->orderBy('total_sold', 'desc')
-                ->take(3)
-                ->get()
-                ->map(function ($item) {
-                    return [
-                        'name' => $item->food_name,
-                        'sold' => (int) $item->total_sold,
-                        'revenue' => (float) $item->total_revenue
-                    ];
-                });
-
-            return response()->json([
-                'total_sales' => (float) $totalSales,
-                'total_orders' => (int) $totalOrders,
-                'total_products' => (int) $totalProducts,
-                'pending_orders' => (int) $pendingOrders,
-                'processing_orders' => (int) $processingOrders,
-                'completed_orders' => (int) $completedOrders,
-                'recent_orders' => $recentOrders,
-                'popular_products' => $popularProducts
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'error' => 'Failed to fetch dashboard stats',
-                'message' => $e->getMessage()
-            ], 500);
-        }
-    });
+    // Dashboard Stats moved to admin group below
 
     // Invoices moved to admin group below
 });
@@ -190,4 +121,79 @@ Route::middleware([\App\Http\Middleware\EnsureAdminOrDemo::class])->prefix('admi
 
     // Update invoice status (endpoint khusus untuk update status)
     Route::put('invoices/{id}/status', [InvoiceStatusController::class, 'updateStatus']);
+
+    // Dashboard Stats - Real data from models
+    Route::get('/dashboard/stats', function () {
+        try {
+            // Get total sales from Sale model (more accurate)
+            $saleRecord = \App\Models\Sale::first();
+            $totalSales = $saleRecord ? $saleRecord->total_sales : 0;
+
+            // Get total orders (count of all invoices)
+            $totalOrders = \App\Models\Invoice::count();
+
+            // Get total products (count of active foods)
+            $totalProducts = \App\Models\Food::where('is_active', true)->count();
+
+            // Get pending orders count
+            $pendingOrders = \App\Models\Invoice::where('status', 'Menunggu')->count();
+
+            // Get processing orders count
+            $processingOrders = \App\Models\Invoice::where('status', 'Diproses')->count();
+
+            // Get completed orders count
+            $completedOrders = \App\Models\Invoice::where('status', 'Selesai')->count();
+
+            // Get recent orders (last 5 invoices)
+            $recentOrders = \App\Models\Invoice::orderBy('created_at', 'desc')
+                ->take(5)
+                ->get()
+                ->map(function ($invoice) {
+                    return [
+                        'id' => $invoice->_id,
+                        'invoice_number' => $invoice->invoice_number,
+                        'customer_name' => $invoice->customer_name,
+                        'total' => $invoice->total_amount,
+                        'status' => $invoice->status,
+                        'created_at' => $invoice->created_at,
+                        'items_count' => 1 // Simplified for now
+                    ];
+                });
+
+            // Get popular products (top 3 by sales from invoice items)
+            $popularProducts = \App\Models\InvoiceItem::select('food_name', 'quantity', 'subtotal')
+                ->get()
+                ->groupBy('food_name')
+                ->map(function ($items, $foodName) {
+                    $totalSold = $items->sum('quantity');
+                    $totalRevenue = $items->sum('subtotal');
+                    return [
+                        'name' => $foodName,
+                        'sold' => (int) $totalSold,
+                        'revenue' => (float) $totalRevenue
+                    ];
+                })
+                ->sortByDesc('sold')
+                ->take(3)
+                ->values();
+
+            return response()->json([
+                'total_sales' => (float) $totalSales,
+                'total_orders' => (int) $totalOrders,
+                'total_products' => (int) $totalProducts,
+                'pending_orders' => (int) $pendingOrders,
+                'processing_orders' => (int) $processingOrders,
+                'completed_orders' => (int) $completedOrders,
+                'recent_orders' => $recentOrders,
+                'popular_products' => $popularProducts
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Failed to fetch dashboard stats',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    });
+
+
 });
