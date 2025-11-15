@@ -7,8 +7,6 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import WhatsAppButton from '@/components/WhatsAppButton';
 import type { Metadata } from 'next';
-import Link from 'next/link';
-
 const inter = Inter({
   subsets: ['latin'],
   display: 'swap',
@@ -31,7 +29,6 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const currentYear = new Date().getFullYear();
 
   return (
     <html lang="id" className="h-100">

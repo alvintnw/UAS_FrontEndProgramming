@@ -78,4 +78,7 @@ export const updateInvoice = (id: string, data: Record<string, unknown>) => api.
 export const updateInvoiceStatus = (id: string, status: string) => api.put(`/admin/invoices/${id}/status`, { status });
 export const deleteInvoice = (id: string) => api.delete(`/admin/invoices/${id}`);
 
+// Fungsi untuk dashboard stats
+export const getDashboardStats = () => api.get('/dashboard/stats');
+
 export default api;

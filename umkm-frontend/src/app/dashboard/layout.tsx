@@ -1,4 +1,4 @@
-// src/app/dashboard/layout.tsx
+  // src/app/dashboard/layout.tsx
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -125,18 +125,7 @@ function DashboardAuthenticatedLayout({
               <span>Pesanan</span>
             </a>
           </li>
-          <li className={isActive('/dashboard/panel') ? 'active' : ''}>
-            <a href="/dashboard/panel" onClick={() => setMobileMenuOpen(false)}>
-              <i className="fas fa-users"></i>
-              <span>Pelanggan</span>
-            </a>
-          </li>
-          <li className={isActive('/dashboard/reports') ? 'active' : ''}>
-            <a href="/dashboard/reports" onClick={() => setMobileMenuOpen(false)}>
-              <i className="fas fa-chart-bar"></i>
-              <span>Laporan</span>
-            </a>
-          </li>
+
           <li className={isActive('/dashboard/settings') ? 'active' : ''}>
             <a href="/dashboard/settings" onClick={() => setMobileMenuOpen(false)}>
               <i className="fas fa-cog"></i>
@@ -160,8 +149,6 @@ function DashboardAuthenticatedLayout({
               {pathname === '/dashboard' ? 'Dashboard' :
                pathname === '/dashboard/products' ? 'Manajemen Menu' :
                pathname === '/dashboard/invoices' ? 'Manajemen Pesanan' :
-               pathname === '/dashboard/panel' ? 'Manajemen Pelanggan' :
-               pathname === '/dashboard/reports' ? 'Laporan & Analitik' :
                pathname === '/dashboard/settings' ? 'Pengaturan Toko' :
                'Dashboard Admin'}
             </h1>

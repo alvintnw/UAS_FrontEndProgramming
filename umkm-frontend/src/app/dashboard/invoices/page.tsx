@@ -127,7 +127,7 @@ export default function InvoicesPage() {
 
   const handleCreateOrder = async () => {
     if (!orderForm.customer_name || !orderForm.customer_phone || orderForm.items.length === 0) {
-      alert('Please fill all fields and add at least one item');
+      alert('Harap isi semua field dan tambahkan setidaknya satu item');
       return;
     }
 
@@ -137,10 +137,10 @@ export default function InvoicesPage() {
         setOrders([response.data.data, ...orders]);
         setOrderForm({ customer_name: '', customer_phone: '', items: [] });
         setShowOrderForm(false);
-        alert('Order created successfully!');
+        alert('Pesanan berhasil dibuat!');
       }
     } catch (error: unknown) {
-      const message = (error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to create order';
+      const message = (error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Gagal membuat pesanan';
       alert(message);
     }
   };

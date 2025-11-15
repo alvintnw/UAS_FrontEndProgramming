@@ -41,7 +41,7 @@ export default function DashboardLogin() {
       } else {
         setError('Email atau password salah');
       }
-    } catch (err: any) {
+    } catch (err) {
       setError('Login failed. Please try again.');
     } finally {
       setLoading(false);

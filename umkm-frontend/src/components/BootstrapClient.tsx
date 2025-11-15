@@ -6,7 +6,9 @@ import { useEffect } from 'react';
 export default function BootstrapClient() {
   useEffect(() => {
     // Import Bootstrap JavaScript
-    require('bootstrap/dist/js/bootstrap.bundle.min.js');
+    import('bootstrap/dist/js/bootstrap.bundle.min.js').catch(() => {
+      // Ignore import errors
+    });
   }, []);
 
   return null;

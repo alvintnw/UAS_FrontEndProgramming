@@ -100,7 +100,7 @@ export default function Home() {
     window.open(whatsappUrl, '_blank');
   };
 
-  const handleOrder = (food: any) => {
+  const handleOrder = (food: Product) => {
     setSelectedFood(food);
     setShowOrderModal(true);
     setOrderForm({
@@ -134,8 +134,9 @@ export default function Home() {
           setShowOrderModal(false);
         }, 3000);
       }
-    } catch (err: any) {
-      setOrderError(err.response?.data?.message || 'Terjadi kesalahan saat membuat pesanan.');
+    } catch (err) {
+      const error = err as { response?: { data?: { message?: string } } };
+      setOrderError(error.response?.data?.message || 'Terjadi kesalahan saat membuat pesanan.');
     } finally {
       setOrderLoading(false);
     }

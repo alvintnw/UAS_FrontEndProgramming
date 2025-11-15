@@ -1,7 +1,106 @@
 // src/app/dashboard/page.tsx
 'use client';
 
+import { useEffect, useState } from 'react';
+import { getDashboardStats } from '@/services/api';
+
+interface DashboardStats {
+  total_sales: number;
+  total_orders: number;
+  total_products: number;
+  pending_orders: number;
+  processing_orders: number;
+  completed_orders: number;
+  recent_orders: Array<{
+    id: string;
+    invoice_number: string;
+    customer_name: string;
+    total: number;
+    status: string;
+    created_at: string;
+    items_count: number;
+  }>;
+  popular_products: Array<{
+    name: string;
+    sold: number;
+    revenue: number;
+  }>;
+}
+
 export default function Dashboard() {
+  const [stats, setStats] = useState<DashboardStats>({
+    total_sales: 0,
+    total_orders: 0,
+    total_products: 0,
+    pending_orders: 0,
+    processing_orders: 0,
+    completed_orders: 0,
+    recent_orders: [],
+    popular_products: []
+  });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchDashboardStats();
+  }, []);
+
+  const fetchDashboardStats = async () => {
+    try {
+      const response = await getDashboardStats();
+      setStats(response.data);
+    } catch (error) {
+      console.error('Error fetching dashboard stats:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+      minimumFractionDigits: 0,
+    }).format(amount);
+  };
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
+
+    if (diffInHours < 1) return 'Baru saja';
+    if (diffInHours < 24) return `${diffInHours} jam yang lalu`;
+
+    const diffInDays = Math.floor(diffInHours / 24);
+    if (diffInDays < 7) return `${diffInDays} hari yang lalu`;
+
+    return date.toLocaleDateString('id-ID');
+  };
+
+  const getStatusBadge = (status: string) => {
+    const statusMap: { [key: string]: { text: string; class: string } } = {
+      'Menunggu': { text: 'Menunggu', class: 'status pending' },
+      'Diproses': { text: 'Diproses', class: 'status processing' },
+      'Selesai': { text: 'Selesai', class: 'status completed' }
+    };
+    return statusMap[status] || { text: status, class: 'status pending' };
+  };
+
+  const getInitials = (name: string) => {
+    return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+  };
+
+  if (loading) {
+    return (
+      <div className="text-center py-5">
+        <div className="spinner-border text-primary" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </div>
+        <p className="mt-2 text-muted">Loading dashboard...</p>
+      </div>
+    );
+  }
+
   return (
     <div>
       {/* Welcome Section */}
@@ -15,15 +114,15 @@ export default function Dashboard() {
           </p>
           <div className="welcome-stats">
             <div className="stat-item">
-              <div className="stat-number">1,248</div>
+              <div className="stat-number">{stats.total_orders.toLocaleString('id-ID')}</div>
               <div className="stat-label">Total Pesanan</div>
             </div>
             <div className="stat-item">
-              <div className="stat-number">856</div>
-              <div className="stat-label">Pelanggan Aktif</div>
+              <div className="stat-number">{stats.recent_orders.length}</div>
+              <div className="stat-label">Pesanan Aktif</div>
             </div>
             <div className="stat-item">
-              <div className="stat-number">42</div>
+              <div className="stat-number">{stats.total_products}</div>
               <div className="stat-label">Menu Tersedia</div>
             </div>
           </div>
@@ -45,9 +144,9 @@ export default function Dashboard() {
               <i className="fas fa-shopping-cart"></i>
             </div>
           </div>
-          <div className="card-value">1,248</div>
+          <div className="card-value">{stats.total_orders.toLocaleString('id-ID')}</div>
           <div className="card-change positive">
-            <i className="fas fa-arrow-up"></i> 12% dari bulan lalu
+            <i className="fas fa-arrow-up"></i> Data real-time
           </div>
         </div>
 
@@ -58,22 +157,22 @@ export default function Dashboard() {
               <i className="fas fa-dollar-sign"></i>
             </div>
           </div>
-          <div className="card-value">Rp 24.8 Jt</div>
+          <div className="card-value">{formatCurrency(stats.total_sales)}</div>
           <div className="card-change positive">
-            <i className="fas fa-arrow-up"></i> 8% dari bulan lalu
+            <i className="fas fa-arrow-up"></i> Dari pesanan selesai
           </div>
         </div>
 
         <div className="card">
           <div className="card-header">
-            <h3 className="card-title">Pelanggan</h3>
+            <h3 className="card-title">Pesanan Aktif</h3>
             <div className="card-icon customers">
               <i className="fas fa-users"></i>
             </div>
           </div>
-          <div className="card-value">856</div>
+          <div className="card-value">{stats.recent_orders.length}</div>
           <div className="card-change positive">
-            <i className="fas fa-arrow-up"></i> 5% dari bulan lalu
+            <i className="fas fa-arrow-up"></i> Pesanan terbaru
           </div>
         </div>
 
@@ -84,9 +183,9 @@ export default function Dashboard() {
               <i className="fas fa-utensils"></i>
             </div>
           </div>
-          <div className="card-value">42</div>
-          <div className="card-change negative">
-            <i className="fas fa-arrow-down"></i> 2 produk habis
+          <div className="card-value">{stats.total_products}</div>
+          <div className="card-change positive">
+            <i className="fas fa-arrow-up"></i> Menu aktif
           </div>
         </div>
       </div>
@@ -115,55 +214,40 @@ export default function Dashboard() {
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td className="font-mono text-blue-600">#ORD-1256</td>
-                  <td className="flex items-center gap-3">
-                    <div className="avatar-circle bg-gradient-to-r from-blue-500 to-purple-500">
-                      BS
-                    </div>
-                    <div>
-                      <div className="customer-name">Budi Santoso</div>
-                      <div className="customer-time">2 jam yang lalu</div>
-                    </div>
-                  </td>
-                  <td className="font-bold text-green-600 text-lg">Rp 85.000</td>
-                  <td><span className="status completed">Selesai</span></td>
-                </tr>
-                <tr>
-                  <td className="font-mono text-blue-600">#ORD-1255</td>
-                  <td className="flex items-center gap-3">
-                    <div className="avatar-circle bg-gradient-to-r from-pink-500 to-red-500">
-                      SI
-                    </div>
-                    <div>
-                      <div className="customer-name">Sari Indah</div>
-                      <div className="customer-time">4 jam yang lalu</div>
-                    </div>
-                  </td>
-                  <td className="font-bold text-green-600 text-lg">Rp 120.000</td>
-                  <td><span className="status processing">Diproses</span></td>
-                </tr>
-                <tr>
-                  <td className="font-mono text-blue-600">#ORD-1254</td>
-                  <td className="flex items-center gap-3">
-                    <div className="avatar-circle bg-gradient-to-r from-green-500 to-teal-500">
-                      RP
-                    </div>
-                    <div>
-                      <div className="customer-name">Rizki Pratama</div>
-                      <div className="customer-time">6 jam yang lalu</div>
-                    </div>
-                  </td>
-                  <td className="font-bold text-green-600 text-lg">Rp 65.000</td>
-                  <td><span className="status pending">Pending</span></td>
-                </tr>
+                {stats.recent_orders.length > 0 ? (
+                  stats.recent_orders.map((order) => {
+                    const statusBadge = getStatusBadge(order.status);
+                    return (
+                      <tr key={order.id}>
+                        <td className="font-mono text-blue-600">#{order.invoice_number}</td>
+                        <td className="flex items-center gap-3">
+                          <div className="avatar-circle bg-gradient-to-r from-blue-500 to-purple-500">
+                            {getInitials(order.customer_name)}
+                          </div>
+                          <div>
+                            <div className="customer-name">{order.customer_name}</div>
+                            <div className="customer-time">{formatDate(order.created_at)}</div>
+                          </div>
+                        </td>
+                        <td className="font-bold text-green-600 text-lg">{formatCurrency(order.total)}</td>
+                        <td><span className={statusBadge.class}>{statusBadge.text}</span></td>
+                      </tr>
+                    );
+                  })
+                ) : (
+                  <tr>
+                    <td colSpan={4} className="text-center py-4 text-muted">
+                      Belum ada pesanan
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>
         </div>
       </div>
 
-      {/* Popular Products */}
+      {/* Popular Products - Real data from API */}
       <div className="popular-products">
         <h3 className="section-title">Produk Terpopuler</h3>
         <div className="table-container">
@@ -178,87 +262,51 @@ export default function Dashboard() {
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td className="flex items-center gap-3">
-                  <div className="product-indicator bg-yellow-500"></div>
-                  <div className="product-image">
-                    <img src="/images/nasi-goreng.jpg" alt="Nasi Goreng" onError={(e) => e.currentTarget.style.display = 'none'} />
-                  </div>
-                  <div>
-                    <div className="product-name">Nasi Goreng Spesial</div>
-                    <div className="product-desc">Nasi goreng dengan telur dan ayam</div>
-                  </div>
-                </td>
-                <td>Makanan</td>
-                <td className="font-bold text-blue-600 text-lg">156</td>
-                <td className="font-bold text-green-600 text-lg">Rp 2.340.000</td>
-                <td>
-                  <div className="rating-container">
-                    <div className="stars">
-                      <span className="star filled">★</span>
-                      <span className="star filled">★</span>
-                      <span className="star filled">★</span>
-                      <span className="star filled">★</span>
-                      <span className="star half">★</span>
-                    </div>
-                    <span className="rating-number">4.8</span>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td className="flex items-center gap-3">
-                  <div className="product-indicator bg-blue-500"></div>
-                  <div className="product-image">
-                    <img src="/images/es-jeruk.jpg" alt="Es Jeruk" onError={(e) => e.currentTarget.style.display = 'none'} />
-                  </div>
-                  <div>
-                    <div className="product-name">Es Jeruk Segar</div>
-                    <div className="product-desc">Minuman segar dari jeruk asli</div>
-                  </div>
-                </td>
-                <td>Minuman</td>
-                <td className="font-bold text-blue-600 text-lg">142</td>
-                <td className="font-bold text-green-600 text-lg">Rp 1.420.000</td>
-                <td>
-                  <div className="rating-container">
-                    <div className="stars">
-                      <span className="star filled">★</span>
-                      <span className="star filled">★</span>
-                      <span className="star filled">★</span>
-                      <span className="star filled">★</span>
-                      <span className="star">★</span>
-                    </div>
-                    <span className="rating-number">4.7</span>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td className="flex items-center gap-3">
-                  <div className="product-indicator bg-red-500"></div>
-                  <div className="product-image">
-                    <img src="/images/ayam-bakar.jpg" alt="Ayam Bakar" onError={(e) => e.currentTarget.style.display = 'none'} />
-                  </div>
-                  <div>
-                    <div className="product-name">Ayam Bakar Madu</div>
-                    <div className="product-desc">Ayam bakar dengan saus madu</div>
-                  </div>
-                </td>
-                <td>Makanan</td>
-                <td className="font-bold text-blue-600 text-lg">128</td>
-                <td className="font-bold text-green-600 text-lg">Rp 3.200.000</td>
-                <td>
-                  <div className="rating-container">
-                    <div className="stars">
-                      <span className="star filled">★</span>
-                      <span className="star filled">★</span>
-                      <span className="star filled">★</span>
-                      <span className="star filled">★</span>
-                      <span className="star filled">★</span>
-                    </div>
-                    <span className="rating-number">4.9</span>
-                  </div>
-                </td>
-              </tr>
+              {stats.popular_products && stats.popular_products.length > 0 ? (
+                stats.popular_products.map((product, index) => {
+                  const colors = ['bg-yellow-500', 'bg-blue-500', 'bg-red-500'];
+                  const icons = ['🍽️', '🥤', '🍗'];
+                  const categories = ['Makanan', 'Minuman', 'Makanan'];
+
+                  return (
+                    <tr key={index}>
+                      <td className="flex items-center gap-3">
+                        <div className={`product-indicator ${colors[index % colors.length]}`}></div>
+                        <div className="product-image">
+                          <div style={{ width: '40px', height: '40px', backgroundColor: '#f0f0f0', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            {icons[index % icons.length]}
+                          </div>
+                        </div>
+                        <div>
+                          <div className="product-name">{product.name}</div>
+                          <div className="product-desc">Produk terlaris berdasarkan penjualan</div>
+                        </div>
+                      </td>
+                      <td>{categories[index % categories.length]}</td>
+                      <td className="font-bold text-blue-600 text-lg">{product.sold.toLocaleString('id-ID')}</td>
+                      <td className="font-bold text-green-600 text-lg">{formatCurrency(product.revenue)}</td>
+                      <td>
+                        <div className="rating-container">
+                          <div className="stars">
+                            <span className="star filled">★</span>
+                            <span className="star filled">★</span>
+                            <span className="star filled">★</span>
+                            <span className="star filled">★</span>
+                            <span className="star half">★</span>
+                          </div>
+                          <span className="rating-number">4.{8 - index}</span>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })
+              ) : (
+                <tr>
+                  <td colSpan={5} className="text-center py-8 text-gray-500">
+                    Belum ada data penjualan produk
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
