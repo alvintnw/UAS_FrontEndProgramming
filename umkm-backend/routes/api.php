@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\DeveloperController;
 use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\InvoiceStatusController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
@@ -40,6 +41,9 @@ Route::resource('developers', DeveloperController::class)->only(['index', 'show'
 
 // Authentication
 Route::post('/register', [AuthController::class, 'register']);
+
+// Customer Order (Public)
+Route::post('/orders', [InvoiceController::class, 'customerOrder']);
 
 // Test MongoDB connection and environment
 Route::get('/test-db', function() {
@@ -122,4 +126,7 @@ Route::middleware([\App\Http\Middleware\EnsureAdminOrDemo::class])->prefix('admi
     // Invoices (Ganti dengan Resource yang lebih bersih)
     // Mencakup GET, POST, PUT, DELETE
     Route::resource('invoices', InvoiceController::class)->except(['create', 'edit']);
+
+    // Update invoice status (endpoint khusus untuk update status)
+    Route::put('invoices/{id}/status', [InvoiceStatusController::class, 'updateStatus']);
 });

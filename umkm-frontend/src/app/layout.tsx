@@ -5,10 +5,11 @@ import { Inter } from 'next/font/google';
 import BootstrapClient from '@/components/BootstrapClient';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import WhatsAppButton from '@/components/WhatsAppButton';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 
-const inter = Inter({ 
+const inter = Inter({
   subsets: ['latin'],
   display: 'swap',
 });
@@ -53,24 +54,7 @@ export default function RootLayout({
         <Footer />
 
         {/* WhatsApp Floating Button */}
-        <div className="position-fixed bottom-0 end-0 m-4 z-3">
-          <a 
-            href="https://wa.me/6281234567890"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn btn-success rounded-pill shadow-lg d-flex align-items-center"
-            style={{ 
-              padding: '12px 20px',
-              animation: 'pulse 2s infinite'
-            }}
-          >
-            <span className="fs-5 me-2">✆</span>
-            <div className="d-flex flex-column text-start">
-              <small className="opacity-75" style={{ fontSize: '0.7rem', lineHeight: '1' }}>Pesan Sekarang</small>
-              <strong style={{ fontSize: '0.8rem', lineHeight: '1' }}>WhatsApp</strong>
-            </div>
-          </a>
-        </div>
+        <WhatsAppButton />
 
         {/* Bootstrap JavaScript */}
         <BootstrapClient />

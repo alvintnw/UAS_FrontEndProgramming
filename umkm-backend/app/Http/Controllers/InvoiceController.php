@@ -121,7 +121,7 @@ class InvoiceController extends Controller
     public function update(Request $request, $id): JsonResponse
     {
         $invoice = Invoice::find($id);
-        
+
         if (!$invoice) {
             return response()->json([
                 'success' => false,
@@ -146,7 +146,7 @@ class InvoiceController extends Controller
                     $total += $item['quantity'] * $item['price'];
                 }
                 $validated['total_amount'] = $total;
-                
+
                 // Update sales total (difference from old total)
                 $difference = $total - $invoice->total_amount;
                 $this->updateSalesTotal($difference);
@@ -158,6 +158,7 @@ class InvoiceController extends Controller
                 }
             }
 
+            // Update the invoice with validated data
             $invoice->update($validated);
 
             DB::commit();
@@ -233,5 +234,79 @@ class InvoiceController extends Controller
             'success' => true,
             'data' => $invoices
         ]);
+    }
+
+    public function customerOrder(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'customer_name' => 'required|string|max:255',
+            'customer_phone' => 'required|string|max:20',
+            'food_id' => 'required|string',
+            'quantity' => 'required|integer|min:1'
+        ]);
+
+        DB::beginTransaction();
+
+        try {
+            // Get food details
+            $food = Food::find($validated['food_id']);
+            if (!$food) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Food not found'
+                ], 404);
+            }
+
+            // Check stock
+            if ($food->stock_quantity < $validated['quantity']) {
+                return response()->json([
+                    'success' => false,
+                    'message' => "Insufficient stock for {$food->name}. Available: {$food->stock_quantity}"
+                ], 400);
+            }
+
+            // Calculate total
+            $total = $validated['quantity'] * $food->price;
+
+            // Create invoice
+            $invoice = Invoice::create([
+                'invoice_number' => 'ORD-' . date('Ymd') . '-' . rand(1000, 9999),
+                'customer_name' => $validated['customer_name'],
+                'customer_phone' => $validated['customer_phone'],
+                'total_amount' => $total,
+                'status' => 'Menunggu'
+            ]);
+
+            // Add invoice item and reduce stock
+            InvoiceItem::create([
+                'invoice_id' => $invoice->_id,
+                'food_id' => $validated['food_id'],
+                'food_name' => $food->name,
+                'quantity' => $validated['quantity'],
+                'price' => $food->price,
+                'subtotal' => $total
+            ]);
+
+            // Reduce stock
+            $food->decrement('stock_quantity', $validated['quantity']);
+
+            // Update sales total
+            $this->updateSalesTotal($total);
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Order created successfully',
+                'data' => $invoice->load('items')
+            ], 201);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to create order: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

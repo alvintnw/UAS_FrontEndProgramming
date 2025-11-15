@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from 'react';
 import { AxiosError } from 'axios';
-import { getInvoices, getAdminFoods, createOrder, updateInvoice } from '../../../services/api';
+import { getInvoices, getAdminFoods, createOrder, updateInvoice, updateInvoiceStatus } from '../../../services/api';
 
 interface Food {
   id: string;
@@ -74,14 +74,18 @@ export default function InvoicesPage() {
 
   const updateStatus = async (orderId: string, newStatus: string) => {
     try {
-      await updateInvoice(orderId, { status: newStatus });
-      setOrders(orders.map(order =>
-        order._id === orderId ? { ...order, status: newStatus } : order
-      ));
-      alert('Status pesanan berhasil diperbarui!');
+      const response = await updateInvoiceStatus(orderId, newStatus);
+      if (response.data.success) {
+        setOrders(orders.map(order =>
+          order._id === orderId ? { ...order, status: newStatus } : order
+        ));
+        alert('Status pesanan berhasil diperbarui dan tersimpan di database!');
+      } else {
+        alert('Gagal memperbarui status pesanan: ' + response.data.message);
+      }
     } catch (error) {
       console.error('Error updating status:', error);
-      alert('Gagal memperbarui status pesanan');
+      alert('Gagal memperbarui status pesanan. Silakan coba lagi.');
     }
   };
 
@@ -207,6 +211,46 @@ export default function InvoicesPage() {
             </div>
           </div>
           <div className="card-value">{orders.length}</div>
+            <div className="card-actions mt-3 flex gap-2">
+              <button
+                onClick={async () => {
+                  // Quick create an order using first available active food
+                  const activeFood = foods.find(f => f.is_active) || foods[0];
+                  if (!activeFood) {
+                    alert('Tidak ada menu tersedia untuk membuat pesanan cepat');
+                    return;
+                  }
+
+                  const payload = {
+                    customer_name: 'Walk-in Demo',
+                    customer_phone: '081234567890',
+                    items: [
+                      {
+                        food_id: activeFood.id,
+                        quantity: 1,
+                        price: activeFood.price
+                      }
+                    ]
+                  };
+
+                  try {
+                    const resp = await createOrder(payload);
+                    if (resp.data?.success) {
+                      setOrders([resp.data.data, ...orders]);
+                      alert('Pesanan demo berhasil dibuat dan disimpan ke database');
+                    } else {
+                      alert('Gagal membuat pesanan demo');
+                    }
+                  } catch (err) {
+                    console.error('Error creating quick order', err);
+                    alert('Terjadi kesalahan saat membuat pesanan demo');
+                  }
+                }}
+                className="px-3 py-2 bg-blue-500 text-white rounded-md text-sm hover:bg-blue-600"
+              >
+                Buat Pesanan Cepat
+              </button>
+            </div>
           <div className="card-change positive">
             <i className="fas fa-arrow-up"></i> {orders.filter(o => o.status === 'Selesai').length} selesai
           </div>

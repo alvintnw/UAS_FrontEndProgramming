@@ -9,7 +9,7 @@ class Invoice extends Model
 {
     use HasFactory;
 
-    protected $connection = 'mongodb_local';
+    protected $connection = 'mongodb';
     protected $collection = 'invoices';
 
     protected $fillable = [

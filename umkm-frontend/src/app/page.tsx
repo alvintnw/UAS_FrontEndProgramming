@@ -42,6 +42,18 @@ export default function Home() {
   // Stronger, benefit-focused headline for the hero
   const fullText = 'Sabana Fried Chicken';
 
+  // Order modal state
+  const [showOrderModal, setShowOrderModal] = useState(false);
+  const [selectedFood, setSelectedFood] = useState<Product | null>(null);
+  const [orderForm, setOrderForm] = useState({
+    customer_name: '',
+    customer_phone: '',
+    quantity: 1
+  });
+  const [orderLoading, setOrderLoading] = useState(false);
+  const [orderSuccess, setOrderSuccess] = useState('');
+  const [orderError, setOrderError] = useState('');
+
   useEffect(() => {
     let index = 0;
     const interval = setInterval(() => {
@@ -86,6 +98,52 @@ export default function Home() {
     const phoneNumber = '6281234567890';
     const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
+  };
+
+  const handleOrder = (food: any) => {
+    setSelectedFood(food);
+    setShowOrderModal(true);
+    setOrderForm({
+      customer_name: '',
+      customer_phone: '',
+      quantity: 1
+    });
+    setOrderSuccess('');
+    setOrderError('');
+  };
+
+  const handleSubmitOrder = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedFood) return;
+
+    setOrderLoading(true);
+    setOrderError('');
+    setOrderSuccess('');
+
+    try {
+      const response = await api.post('/orders', {
+        customer_name: orderForm.customer_name,
+        customer_phone: orderForm.customer_phone,
+        food_id: selectedFood.id,
+        quantity: orderForm.quantity
+      });
+
+      if (response.data.success) {
+        setOrderSuccess('Pesanan berhasil dibuat! Kami akan segera menghubungi Anda.');
+        setTimeout(() => {
+          setShowOrderModal(false);
+        }, 3000);
+      }
+    } catch (err: any) {
+      setOrderError(err.response?.data?.message || 'Terjadi kesalahan saat membuat pesanan.');
+    } finally {
+      setOrderLoading(false);
+    }
+  };
+
+  const closeModal = () => {
+    setShowOrderModal(false);
+    setSelectedFood(null);
   };
 
   return (
@@ -260,7 +318,7 @@ export default function Home() {
                           <div className="card-overlay">
                             <button
                               className="btn btn-primary btn-lg rounded-circle shadow-lg"
-                              onClick={() => handleWhatsAppOrder(food.name)}
+                              onClick={() => handleOrder(food)}
                             >
                               <span className="fs-4">🛒</span>
                             </button>
@@ -274,7 +332,7 @@ export default function Home() {
                             <div className="d-flex gap-2">
                               <button
                                 className="btn btn-outline-primary btn-sm px-3"
-                                onClick={() => handleWhatsAppOrder(food.name)}
+                                onClick={() => handleOrder(food)}
                               >
                                 <span className="me-1">📱</span>
                                 Pesan
@@ -476,6 +534,86 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Order Modal */}
+      {showOrderModal && selectedFood && (
+        <div className="modal fade show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }} tabIndex={-1}>
+          <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Pesan {selectedFood.name}</h5>
+                <button type="button" className="btn-close" onClick={closeModal}></button>
+              </div>
+              <div className="modal-body">
+                <div className="mb-3">
+                  <Image
+                    src={selectedFood.image_url}
+                    alt={selectedFood.name}
+                    width={200}
+                    height={150}
+                    className="img-fluid rounded"
+                    style={{ objectFit: 'cover' }}
+                  />
+                </div>
+                <p className="text-muted">{selectedFood.description}</p>
+                <p className="h5 text-primary fw-bold">{selectedFood.price}</p>
+
+                {orderSuccess && (
+                  <div className="alert alert-success">{orderSuccess}</div>
+                )}
+
+                {orderError && (
+                  <div className="alert alert-danger">{orderError}</div>
+                )}
+
+                <form onSubmit={handleSubmitOrder}>
+                  <div className="mb-3">
+                    <label htmlFor="customer_name" className="form-label">Nama Lengkap</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="customer_name"
+                      value={orderForm.customer_name}
+                      onChange={(e) => setOrderForm({...orderForm, customer_name: e.target.value})}
+                      required
+                    />
+                  </div>
+                  <div className="mb-3">
+                    <label htmlFor="customer_phone" className="form-label">Nomor Telepon</label>
+                    <input
+                      type="tel"
+                      className="form-control"
+                      id="customer_phone"
+                      value={orderForm.customer_phone}
+                      onChange={(e) => setOrderForm({...orderForm, customer_phone: e.target.value})}
+                      required
+                    />
+                  </div>
+                  <div className="mb-3">
+                    <label htmlFor="quantity" className="form-label">Jumlah</label>
+                    <input
+                      type="number"
+                      className="form-control"
+                      id="quantity"
+                      min="1"
+                      value={orderForm.quantity}
+                      onChange={(e) => setOrderForm({...orderForm, quantity: e.target.value})}
+                      required
+                    />
+                  </div>
+                  <div className="d-flex gap-2">
+                    <button type="submit" className="btn btn-primary" disabled={orderLoading}>
+                      {orderLoading ? 'Memproses...' : 'Pesan Sekarang'}
+                    </button>
+                    <button type="button" className="btn btn-secondary" onClick={closeModal}>
+                      Batal
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );

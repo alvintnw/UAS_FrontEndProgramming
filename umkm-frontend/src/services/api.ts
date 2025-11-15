@@ -75,6 +75,7 @@ export const createOrder = (data: {
   }>;
 }) => api.post('/admin/invoices', data);
 export const updateInvoice = (id: string, data: Record<string, unknown>) => api.put(`/admin/invoices/${id}`, data);
+export const updateInvoiceStatus = (id: string, status: string) => api.put(`/admin/invoices/${id}/status`, { status });
 export const deleteInvoice = (id: string) => api.delete(`/admin/invoices/${id}`);
 
 export default api;

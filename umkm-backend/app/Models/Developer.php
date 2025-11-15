@@ -2,9 +2,10 @@
 
 namespace App\Models;
 
-use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
+use MongoDB\Laravel\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Developer extends Eloquent
+class Developer extends Model
 {
     protected $connection = 'mongodb';
     protected $collection = 'developers';
