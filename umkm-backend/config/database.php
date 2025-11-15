@@ -33,7 +33,7 @@ return [
 
     'mongodb' => [
         'driver' => 'mongodb',
-        'dsn' => env('DB_DSN', 'mongodb+srv://Aldi:Aldi12345@cluster0.yezc2.mongodb.net/umkm_backend?retryWrites=true&w=majority&tls=true&tlsAllowInvalidCertificates=true'),
+        'dsn' => env('DB_DSN', 'mongodb+srv://Aldi:Aldi12345@cluster0.yezc2.mongodb.net/?retryWrites=true&w=majority&tls=true&tlsAllowInvalidCertificates=true'),
         'database' => env('DB_DATABASE', 'umkm_backend'),
         'options' => [
             'retryWrites' => true,

@@ -9,6 +9,7 @@ try {
 
     $result = $collection->insertOne([
         'name' => 'Aldi',
+        'email' => uniqid() . '@noemail.com', // Tambahkan ini
         'status' => 'Connected to MongoDB Atlas!',
         'time' => date('Y-m-d H:i:s')
     ]);
