@@ -1,4 +1,4 @@
-  // src/app/dashboard/layout.tsx
+// src/app/dashboard/layout.tsx
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -125,13 +125,7 @@ function DashboardAuthenticatedLayout({
               <span>Pesanan</span>
             </a>
           </li>
-
-          <li className={isActive('/dashboard/settings') ? 'active' : ''}>
-            <a href="/dashboard/settings" onClick={() => setMobileMenuOpen(false)}>
-              <i className="fas fa-cog"></i>
-              <span>Pengaturan</span>
-            </a>
-          </li>
+          {/* Settings menu dihapus */}
           <li>
             <button onClick={handleLogout} className="logout-btn">
               <i className="fas fa-sign-out-alt"></i>
@@ -149,7 +143,6 @@ function DashboardAuthenticatedLayout({
               {pathname === '/dashboard' ? 'Dashboard' :
                pathname === '/dashboard/products' ? 'Manajemen Menu' :
                pathname === '/dashboard/invoices' ? 'Manajemen Pesanan' :
-               pathname === '/dashboard/settings' ? 'Pengaturan Toko' :
                'Dashboard Admin'}
             </h1>
           </div>
