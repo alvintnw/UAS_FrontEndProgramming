@@ -120,7 +120,7 @@ Route::middleware([\App\Http\Middleware\EnsureAdminOrDemo::class])->prefix('admi
     Route::resource('invoices', InvoiceController::class)->except(['create', 'edit']);
 
     // Update invoice status (endpoint khusus untuk update status)
-    Route::put('invoices/{id}/status', [InvoiceStatusController::class, 'updateStatus']);
+    Route::put('invoices/{invoice}/status', [InvoiceStatusController::class, 'updateStatus']);
 
     // Dashboard Stats - Real data from models
     Route::get('/dashboard/stats', function () {

@@ -8,14 +8,14 @@ use Illuminate\Http\JsonResponse;
 
 class InvoiceStatusController extends Controller
 {
-    public function updateStatus(Request $request, $id): JsonResponse
+    public function updateStatus(Request $request, $invoiceId): JsonResponse
     {
         $validated = $request->validate([
             'status' => 'required|in:Menunggu,Diproses,Selesai'
         ]);
 
         // Cari invoice berdasarkan ID (string untuk MongoDB)
-        $invoice = Invoice::find($id);
+        $invoice = Invoice::find($invoiceId);
 
         if (!$invoice) {
             return response()->json([
@@ -27,7 +27,7 @@ class InvoiceStatusController extends Controller
         try {
             // Log status sebelum update
             \Log::info("Updating invoice status", [
-                'invoice_id' => $id,
+                'invoice_id' => $invoiceId,
                 'old_status' => $invoice->status,
                 'new_status' => $validated['status']
             ]);
@@ -49,7 +49,7 @@ class InvoiceStatusController extends Controller
             }
 
             \Log::info("Invoice status updated successfully", [
-                'invoice_id' => $id,
+                'invoice_id' => $invoiceId,
                 'status' => $invoice->status
             ]);
 
@@ -61,7 +61,7 @@ class InvoiceStatusController extends Controller
 
         } catch (\Exception $e) {
             \Log::error("Failed to update invoice status", [
-                'invoice_id' => $id,
+                'invoice_id' => $invoiceId,
                 'error' => $e->getMessage()
             ]);
 

@@ -23,7 +23,7 @@ interface OrderItem {
 }
 
 interface Order {
-  _id: string;
+  id: string;
   invoice_number: string;
   customer_name: string;
   customer_phone: string;
@@ -73,19 +73,37 @@ export default function InvoicesPage() {
   }, []);
 
   const updateStatus = async (orderId: string, newStatus: string) => {
+    console.log(`Attempting to update status for order ${orderId} to ${newStatus}`);
+
     try {
       const response = await updateInvoiceStatus(orderId, newStatus);
-      if (response.data.success) {
+      console.log('API Response:', response);
+
+      if (response.data && response.data.success) {
+        console.log('Status update successful, updating local state');
         setOrders(orders.map(order =>
-          order._id === orderId ? { ...order, status: newStatus } : order
+          order.id === orderId ? { ...order, status: newStatus } : order
         ));
-        alert('Status pesanan berhasil diperbarui dan tersimpan di database!');
+        alert(`Status pesanan berhasil diperbarui ke "${newStatus}" dan tersimpan di database!`);
       } else {
-        alert('Gagal memperbarui status pesanan: ' + response.data.message);
+        console.error('API returned success=false:', response.data);
+        alert(`Gagal memperbarui status pesanan: ${response.data?.message || 'Unknown error'}`);
       }
     } catch (error) {
       console.error('Error updating status:', error);
-      alert('Gagal memperbarui status pesanan. Silakan coba lagi.');
+
+      const axiosError = error as AxiosError;
+      if (axiosError.response) {
+        console.error('Response data:', axiosError.response.data);
+        console.error('Response status:', axiosError.response.status);
+        alert(`Gagal memperbarui status pesanan. Server error: ${axiosError.response.status}`);
+      } else if (axiosError.request) {
+        console.error('No response received:', axiosError.request);
+        alert('Gagal memperbarui status pesanan. Tidak ada respons dari server.');
+      } else {
+        console.error('Request setup error:', axiosError.message);
+        alert(`Gagal memperbarui status pesanan: ${axiosError.message}`);
+      }
     }
   };
 
@@ -356,10 +374,10 @@ export default function InvoicesPage() {
           </thead>
           <tbody className="bg-white/60 backdrop-blur-md">
             {filteredOrders.map((order, index) => (
-              <tr key={order._id || `order-${index}`} className={`hover:bg-gradient-to-r hover:from-red-50/80 hover:via-orange-50/80 hover:to-yellow-50/80 transition-all duration-300 transform hover:scale-[1.01] hover:shadow-lg ${index % 2 === 0 ? 'bg-white/40' : 'bg-gradient-to-r from-gray-50/30 to-orange-50/20'}`}>
+              <tr key={order.id || `order-${index}`} className={`hover:bg-gradient-to-r hover:from-red-50/80 hover:via-orange-50/80 hover:to-yellow-50/80 transition-all duration-300 transform hover:scale-[1.01] hover:shadow-lg ${index % 2 === 0 ? 'bg-white/40' : 'bg-gradient-to-r from-gray-50/30 to-orange-50/20'}`}>
                 <td className="whitespace-nowrap">
                   <div className="font-mono text-red-600 font-bold text-lg">{order.invoice_number}</div>
-                  <div className="text-xs text-gray-500 font-medium">ID: {order._id}</div>
+                  <div className="text-xs text-gray-500 font-medium">ID: {order.id}</div>
                 </td>
                 <td className="whitespace-nowrap">
                   <div className="flex items-center gap-3">
@@ -391,7 +409,7 @@ export default function InvoicesPage() {
                   <div className="flex gap-3">
                     <select
                       value={order.status}
-                      onChange={(e) => updateStatus(order._id, e.target.value)}
+                      onChange={(e) => updateStatus(order.id, e.target.value)}
                       className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500 bg-white shadow-sm"
                     >
                       <option value="Menunggu">Menunggu</option>
@@ -399,7 +417,7 @@ export default function InvoicesPage() {
                       <option value="Selesai">Selesai</option>
                     </select>
                     <button
-                      onClick={() => setShowDetails(showDetails === order._id ? null : order._id)}
+                      onClick={() => setShowDetails(showDetails === order.id ? null : order.id)}
                       className="bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white px-4 py-2 rounded-xl text-sm font-bold transition-all duration-300 flex items-center gap-2 shadow-xl hover:shadow-2xl transform hover:-translate-y-1 hover:scale-105 border-2 border-red-400"
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -433,7 +451,7 @@ export default function InvoicesPage() {
             </div>
             <div className="p-6">
               {(() => {
-                const order = orders.find(o => o._id === showDetails);
+                const order = orders.find(o => o.id === showDetails);
                 if (!order) return null;
                 return (
                   <div className="space-y-4">
